@@ -1,0 +1,18 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - app
+    restart: unless-stopped
+
+  app:
+    # Backend FastAPI service - adjust image/build as needed
+    # build: ./backend
+    # image: centro-de-control-backend
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
