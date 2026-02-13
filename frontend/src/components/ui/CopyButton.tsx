@@ -20,16 +20,12 @@ export default function CopyButton({ text, className }: CopyButtonProps) {
     <button
       onClick={handleCopy}
       className={cn(
-        "rounded-md p-1.5 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors",
+        "rounded-md p-1.5 text-gray-400 hover:text-foreground hover:bg-gray-100 transition-colors",
         className
       )}
       title="Copiar"
     >
-      {copied ? (
-        <Check className="h-4 w-4 text-green-400" />
-      ) : (
-        <Copy className="h-4 w-4" />
-      )}
+      {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
     </button>
   )
 }

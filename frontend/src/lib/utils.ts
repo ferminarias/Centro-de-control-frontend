@@ -20,17 +20,23 @@ export function formatDate(dateString: string) {
   })
 }
 
+export function formatDateShort(dateString: string) {
+  return new Date(dateString).toLocaleDateString("es-ES", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  })
+}
+
 export async function copyToClipboard(text: string) {
   await navigator.clipboard.writeText(text)
 }
 
 export const TIPO_DATO_COLORS: Record<string, string> = {
-  string: "bg-gray-500/20 text-gray-300",
-  number: "bg-blue-500/20 text-blue-300",
-  boolean: "bg-purple-500/20 text-purple-300",
-  datetime: "bg-cyan-500/20 text-cyan-300",
-  email: "bg-green-500/20 text-green-300",
-  phone: "bg-orange-500/20 text-orange-300",
+  string: "bg-gray-100 text-gray-700",
+  number: "bg-blue-100 text-blue-700",
+  boolean: "bg-purple-100 text-purple-700",
+  datetime: "bg-cyan-100 text-cyan-700",
+  email: "bg-green-100 text-green-700",
+  phone: "bg-orange-100 text-orange-700",
 }
-
-export const WEBHOOK_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000"

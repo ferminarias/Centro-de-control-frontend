@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { toast } from "sonner"
 import Modal from "@/components/ui/Modal"
-import { createField, updateField } from "@/api/fields"
-import type { FieldResponse, FieldCreate, FieldUpdate, TipoDato } from "@/types"
+import { useCreateField, useUpdateField } from "@/hooks/useFields"
+import type { FieldResponse, TipoDato } from "@/types"
 
 const TIPO_OPTIONS: TipoDato[] = ["string", "number", "boolean", "datetime", "email", "phone"]
 
@@ -19,8 +17,11 @@ export default function FieldFormModal({ open, onOpenChange, accountId, field }:
   const [tipoDato, setTipoDato] = useState<TipoDato>("string")
   const [descripcion, setDescripcion] = useState("")
   const [esRequerido, setEsRequerido] = useState(false)
-  const queryClient = useQueryClient()
   const isEdit = !!field
+
+  const createMutation = useCreateField(accountId)
+  const updateMutation = useUpdateField(accountId)
+  const isPending = createMutation.isPending || updateMutation.isPending
 
   useEffect(() => {
     if (field) {
@@ -36,43 +37,26 @@ export default function FieldFormModal({ open, onOpenChange, accountId, field }:
     }
   }, [field, open])
 
-  const createMutation = useMutation({
-    mutationFn: (data: FieldCreate) => createField(accountId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["fields", accountId] })
-      toast.success("Campo creado exitosamente")
-      onOpenChange(false)
-    },
-    onError: () => toast.error("Error al crear el campo"),
-  })
-
-  const updateMutation = useMutation({
-    mutationFn: (data: FieldUpdate) => updateField(field!.id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["fields", accountId] })
-      toast.success("Campo actualizado exitosamente")
-      onOpenChange(false)
-    },
-    onError: () => toast.error("Error al actualizar el campo"),
-  })
-
-  const isPending = createMutation.isPending || updateMutation.isPending
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (isEdit) {
-      updateMutation.mutate({ tipo_dato: tipoDato, descripcion: descripcion || undefined, es_requerido: esRequerido })
+      await updateMutation.mutateAsync({
+        fieldId: field!.id,
+        payload: { tipo_dato: tipoDato, descripcion: descripcion || undefined, es_requerido: esRequerido },
+      })
     } else {
-      createMutation.mutate({ nombre_campo: nombre.trim(), tipo_dato: tipoDato, descripcion: descripcion || undefined, es_requerido: esRequerido })
+      await createMutation.mutateAsync({
+        nombre_campo: nombre.trim(),
+        tipo_dato: tipoDato,
+        descripcion: descripcion || undefined,
+        es_requerido: esRequerido,
+      })
     }
+    onOpenChange(false)
   }
 
   return (
-    <Modal
-      open={open}
-      onOpenChange={onOpenChange}
-      title={isEdit ? "Editar campo" : "Nuevo campo"}
-    >
+    <Modal open={open} onOpenChange={onOpenChange} title={isEdit ? "Editar campo" : "Nuevo campo"}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="text-sm font-medium text-foreground">Nombre del campo</label>
@@ -82,7 +66,7 @@ export default function FieldFormModal({ open, onOpenChange, accountId, field }:
             onChange={(e) => setNombre(e.target.value)}
             disabled={isEdit}
             placeholder="nombre_campo"
-            className="mt-1 w-full rounded-lg border border-border bg-muted px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+            className="mt-1 w-full rounded-lg border border-border bg-white px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50 disabled:bg-gray-50"
             required
           />
           {isEdit && <p className="text-xs text-muted-foreground mt-1">El nombre no es editable</p>}
@@ -93,7 +77,7 @@ export default function FieldFormModal({ open, onOpenChange, accountId, field }:
           <select
             value={tipoDato}
             onChange={(e) => setTipoDato(e.target.value as TipoDato)}
-            className="mt-1 w-full rounded-lg border border-border bg-muted px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            className="mt-1 w-full rounded-lg border border-border bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
           >
             {TIPO_OPTIONS.map((t) => (
               <option key={t} value={t}>{t}</option>
@@ -103,12 +87,12 @@ export default function FieldFormModal({ open, onOpenChange, accountId, field }:
 
         <div>
           <label className="text-sm font-medium text-foreground">Descripcion</label>
-          <input
-            type="text"
+          <textarea
             value={descripcion}
             onChange={(e) => setDescripcion(e.target.value)}
-            placeholder="Descripcion opcional"
-            className="mt-1 w-full rounded-lg border border-border bg-muted px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            placeholder="Descripcion opcional del campo"
+            rows={2}
+            className="mt-1 w-full rounded-lg border border-border bg-white px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
           />
         </div>
 
@@ -120,30 +104,18 @@ export default function FieldFormModal({ open, onOpenChange, accountId, field }:
             aria-checked={esRequerido}
             onClick={() => setEsRequerido(!esRequerido)}
             className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
-              esRequerido ? "bg-primary" : "bg-muted"
+              esRequerido ? "bg-primary" : "bg-gray-300"
             }`}
           >
-            <span
-              className={`pointer-events-none block h-5 w-5 rounded-full bg-white shadow-lg transition-transform ${
-                esRequerido ? "translate-x-5" : "translate-x-0"
-              }`}
-            />
+            <span className={`pointer-events-none block h-5 w-5 rounded-full bg-white shadow-lg transition-transform ${esRequerido ? "translate-x-5" : "translate-x-0"}`} />
           </button>
         </div>
 
         <div className="flex justify-end gap-3 pt-2">
-          <button
-            type="button"
-            onClick={() => onOpenChange(false)}
-            className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-accent transition-colors"
-          >
+          <button type="button" onClick={() => onOpenChange(false)} className="rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors">
             Cancelar
           </button>
-          <button
-            type="submit"
-            disabled={isPending || (!isEdit && !nombre.trim())}
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 transition-colors disabled:opacity-50"
-          >
+          <button type="submit" disabled={isPending || (!isEdit && !nombre.trim())} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 disabled:opacity-50 transition-colors">
             {isPending ? "Guardando..." : isEdit ? "Actualizar" : "Crear campo"}
           </button>
         </div>

@@ -19,7 +19,7 @@ export default function Pagination({ page, pageSize, total, onPageChange, onPage
         <select
           value={pageSize}
           onChange={(e) => onPageSizeChange(Number(e.target.value))}
-          className="rounded-md border border-border bg-card px-2 py-1 text-sm text-foreground"
+          className="rounded-md border border-border bg-white px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
         >
           <option value={10}>10</option>
           <option value={20}>20</option>
@@ -33,14 +33,12 @@ export default function Pagination({ page, pageSize, total, onPageChange, onPage
           disabled={page <= 1}
           className={cn(
             "rounded-md p-2 transition-colors",
-            page <= 1
-              ? "text-muted-foreground/50 cursor-not-allowed"
-              : "text-foreground hover:bg-accent"
+            page <= 1 ? "text-gray-300 cursor-not-allowed" : "text-gray-600 hover:bg-gray-100"
           )}
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
-        <span className="px-3 text-sm">
+        <span className="px-3 text-sm text-muted-foreground">
           {page} / {totalPages || 1}
         </span>
         <button
@@ -48,9 +46,7 @@ export default function Pagination({ page, pageSize, total, onPageChange, onPage
           disabled={page >= totalPages}
           className={cn(
             "rounded-md p-2 transition-colors",
-            page >= totalPages
-              ? "text-muted-foreground/50 cursor-not-allowed"
-              : "text-foreground hover:bg-accent"
+            page >= totalPages ? "text-gray-300 cursor-not-allowed" : "text-gray-600 hover:bg-gray-100"
           )}
         >
           <ChevronRight className="h-4 w-4" />

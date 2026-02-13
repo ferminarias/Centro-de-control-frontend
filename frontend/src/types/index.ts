@@ -1,3 +1,5 @@
+// ── Accounts ──
+
 export interface AccountResponse {
   id: string
   nombre: string
@@ -23,6 +25,10 @@ export interface AccountUpdate {
   activo?: boolean
   auto_crear_campos?: boolean
 }
+
+// ── Fields ──
+
+export type TipoDato = "string" | "number" | "boolean" | "datetime" | "email" | "phone"
 
 export interface FieldResponse {
   id: string
@@ -52,6 +58,27 @@ export interface FieldUpdate {
   es_requerido?: boolean
 }
 
+// ── Leads ──
+
+export interface LeadResponse {
+  id: string
+  cuenta_id: string
+  record_id: string
+  lead_base_id: string | null
+  base_nombre: string | null
+  datos: Record<string, unknown>
+  created_at: string
+}
+
+export interface LeadListResponse {
+  items: LeadResponse[]
+  total: number
+  page: number
+  page_size: number
+}
+
+// ── Records ──
+
 export interface RecordResponse {
   id: string
   cuenta_id: string
@@ -70,12 +97,77 @@ export interface RecordListResponse {
   page_size: number
 }
 
+// ── Lead Bases ──
+
+export interface LeadBaseResponse {
+  id: string
+  cuenta_id: string
+  nombre: string
+  descripcion: string | null
+  es_default: boolean
+  created_at: string
+  updated_at: string
+  leads_count?: number
+  total_leads?: number
+}
+
+export interface LeadBaseListResponse {
+  items: LeadBaseResponse[]
+  total: number
+}
+
+export interface LeadBaseCreate {
+  nombre: string
+  descripcion?: string
+  es_default?: boolean
+}
+
+export interface LeadBaseUpdate {
+  nombre?: string
+  descripcion?: string
+  es_default?: boolean
+}
+
+// ── Routing Rules ──
+
+export type RuleOperator = "equals" | "not_equals" | "contains" | "greater_than" | "less_than"
+
+export interface RoutingRuleResponse {
+  id: string
+  lead_base_id: string
+  campo: string
+  operador: RuleOperator
+  valor: string
+  prioridad: number
+  created_at: string
+}
+
+export interface RoutingRuleListResponse {
+  items: RoutingRuleResponse[]
+  total: number
+}
+
+export interface RoutingRuleCreate {
+  campo: string
+  operador: RuleOperator
+  valor: string
+  prioridad?: number
+}
+
+export interface RoutingRuleUpdate {
+  campo?: string
+  operador?: RuleOperator
+  valor?: string
+  prioridad?: number
+}
+
+// ── Ingest ──
+
 export interface IngestResponse {
   success: boolean
   record_id: string
+  lead_id: string
   unknown_fields: string[]
   auto_create_enabled: boolean
   fields_created: string[] | null
 }
-
-export type TipoDato = "string" | "number" | "boolean" | "datetime" | "email" | "phone"
