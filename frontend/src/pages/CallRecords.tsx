@@ -9,7 +9,6 @@ import Badge from "@/components/ui/Badge"
 import Modal from "@/components/ui/Modal"
 import Pagination from "@/components/ui/Pagination"
 import { formatDate } from "@/lib/utils"
-import type { CallRecordResponse } from "@/types"
 
 export default function CallRecords() {
   const { selectedAccount } = useAccount()

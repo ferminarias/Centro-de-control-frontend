@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Plus, Pencil, Trash2, Headphones, ChevronDown } from "lucide-react"
+import { Plus, Pencil, Trash2, Headphones } from "lucide-react"
 import { useAccount } from "@/context/AccountContext"
 import { useAgents, useCreateAgent, useUpdateAgent, useDeleteAgent, useUpdateAgentStatus } from "@/hooks/useVoip"
 import { TableSkeleton } from "@/components/ui/Loading"

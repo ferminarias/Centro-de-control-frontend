@@ -4,7 +4,6 @@ import {
   Plus,
   Pencil,
   Trash2,
-  Power,
   History,
   ChevronDown,
   ChevronRight,
@@ -13,8 +12,6 @@ import {
   X,
 } from "lucide-react"
 import { useAccount } from "@/context/AccountContext"
-import { useLeadBasesList } from "@/hooks/useLeadBases"
-import { useFieldsList } from "@/hooks/useFields"
 import {
   useAutomationsList,
   useAutomationDetail,
@@ -36,7 +33,7 @@ import Badge from "@/components/ui/Badge"
 import Modal from "@/components/ui/Modal"
 import ConfirmDialog from "@/components/ui/ConfirmDialog"
 import Pagination from "@/components/ui/Pagination"
-import { formatDate, cn } from "@/lib/utils"
+import { formatDate } from "@/lib/utils"
 import type { AutomationResponse } from "@/types"
 
 const TRIGGER_LABELS: Record<string, string> = {

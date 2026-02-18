@@ -9,7 +9,6 @@ import {
   Eye,
   ChevronDown,
   Users,
-  X,
 } from "lucide-react"
 import { useAccount } from "@/context/AccountContext"
 import { useLeadBasesList } from "@/hooks/useLeadBases"
@@ -21,7 +20,7 @@ import {
   useLoteLeads,
 } from "@/hooks/useLotes"
 import { downloadLoteTemplate } from "@/api/lotes"
-import { TableSkeleton, Spinner } from "@/components/ui/Loading"
+import { TableSkeleton } from "@/components/ui/Loading"
 import ErrorState from "@/components/ui/ErrorState"
 import EmptyState from "@/components/ui/EmptyState"
 import Badge from "@/components/ui/Badge"

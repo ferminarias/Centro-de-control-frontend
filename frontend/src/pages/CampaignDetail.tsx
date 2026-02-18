@@ -1,12 +1,12 @@
 import { useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { ArrowLeft, Play, Pause, Square, Plus, Trash2, Phone, ChevronDown, UserPlus, Users, BarChart3 } from "lucide-react"
+import { ArrowLeft, Play, Pause, Square, Plus, Phone, ChevronDown, UserPlus, Users } from "lucide-react"
 import { useAccount } from "@/context/AccountContext"
 import * as api from "@/api/voip"
 import {
   useCampaignControl, useCampaignStats, useCampaignLeads,
-  useAgents, useAssignAgent, useRemoveAgent, useAddLeadsBulk,
+  useAgents, useAssignAgent, useAddLeadsBulk,
   useManualCall, useDispositionLead, useDispositions,
 } from "@/hooks/useVoip"
 import { useLeadBasesList } from "@/hooks/useLeadBases"
@@ -49,7 +49,6 @@ export default function CampaignDetail() {
   // Agents
   const { data: allAgentsData } = useAgents(accountId || undefined)
   const assignMut = useAssignAgent(accountId)
-  const removeMut = useRemoveAgent(accountId)
   const [assignModalOpen, setAssignModalOpen] = useState(false)
   const [selectedAgentId, setSelectedAgentId] = useState("")
 
@@ -86,11 +85,6 @@ export default function CampaignDetail() {
     assignMut.mutate({ campaignId, agentId: selectedAgentId }, {
       onSuccess: () => { setAssignModalOpen(false); setSelectedAgentId("") },
     })
-  }
-
-  const handleRemoveAgent = (agentId: string) => {
-    if (!campaignId) return
-    removeMut.mutate({ campaignId, agentId })
   }
 
   const handleBulkAdd = () => {

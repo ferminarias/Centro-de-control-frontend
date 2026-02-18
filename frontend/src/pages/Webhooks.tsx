@@ -8,7 +8,6 @@ import {
   History,
   Check,
   X,
-  Plus as PlusIcon,
 } from "lucide-react"
 import { useAccount } from "@/context/AccountContext"
 import {
