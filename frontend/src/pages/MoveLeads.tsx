@@ -221,6 +221,9 @@ export default function MoveLeads() {
                         </button>
                       </th>
                       <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
+                        ID
+                      </th>
+                      <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
                         Fecha
                       </th>
                       {columns.map((col) => (
@@ -370,6 +373,9 @@ function MoveLeadRow({
             <Square className="h-5 w-5" />
           )}
         </button>
+      </td>
+      <td className="px-6 py-4 text-sm font-mono font-medium text-foreground whitespace-nowrap">
+        {lead.id_lead}
       </td>
       <td className="px-6 py-4 text-sm text-muted-foreground whitespace-nowrap">
         {formatDate(lead.created_at)}

@@ -1,22 +1,42 @@
 import { useState, useRef, useEffect } from "react"
-import { ChevronDown, Settings, Building2 } from "lucide-react"
+import { ChevronDown, Settings, Building2, Megaphone } from "lucide-react"
 import { useAccount } from "@/context/AccountContext"
+import { useCampaign } from "@/context/CampaignContext"
 import { useAccountsList } from "@/hooks/useAccounts"
+import { useCampaigns } from "@/hooks/useVoip"
 import AdminPanel from "@/components/admin/AdminPanel"
+import Badge from "@/components/ui/Badge"
+import type { CampaignStatus } from "@/types"
+
+const statusLabel = (s: CampaignStatus) => {
+  switch (s) { case "running": return "En curso"; case "paused": return "Pausada"; case "completed": return "Completada"; case "idle": return "Inactiva"; default: return s }
+}
+const statusVariant = (s: CampaignStatus) => {
+  switch (s) { case "running": return "success" as const; case "paused": return "warning" as const; case "completed": return "info" as const; default: return "default" as const }
+}
 
 export default function Header() {
   const { selectedAccount, setSelectedAccount } = useAccount()
+  const { selectedCampaign, setSelectedCampaign } = useCampaign()
   const { data } = useAccountsList()
+  const { data: campaignsData } = useCampaigns(selectedAccount?.id ?? undefined)
+
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [campaignDropdownOpen, setCampaignDropdownOpen] = useState(false)
   const [adminOpen, setAdminOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const campaignDropdownRef = useRef<HTMLDivElement>(null)
 
   const accounts = data?.items?.filter((a) => a.activo) ?? []
+  const campaigns = campaignsData?.items ?? []
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDropdownOpen(false)
+      }
+      if (campaignDropdownRef.current && !campaignDropdownRef.current.contains(e.target as Node)) {
+        setCampaignDropdownOpen(false)
       }
     }
     document.addEventListener("mousedown", handleClickOutside)
@@ -31,10 +51,18 @@ export default function Header() {
     }
   }, [data, selectedAccount, setSelectedAccount])
 
+  // Sync: if selected campaign is no longer in list, clear it
+  useEffect(() => {
+    if (selectedCampaign && campaignsData) {
+      const stillExists = campaignsData.items.find((c) => c.id === selectedCampaign.id)
+      if (!stillExists) setSelectedCampaign(null)
+    }
+  }, [campaignsData, selectedCampaign, setSelectedCampaign])
+
   return (
     <>
       <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-white px-6 shadow-sm">
-        {/* Left side: Logo + Account Selector */}
+        {/* Left side: Logo + Account Selector + Campaign Selector */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2.5">
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
@@ -102,6 +130,61 @@ export default function Header() {
               </div>
             )}
           </div>
+
+          {/* Campaign selector (only when account is selected and there are campaigns) */}
+          {selectedAccount && campaigns.length > 0 && (
+            <>
+              <div className="h-6 w-px bg-border hidden sm:block" />
+              <div className="relative" ref={campaignDropdownRef}>
+                <button
+                  onClick={() => setCampaignDropdownOpen(!campaignDropdownOpen)}
+                  className="flex items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm hover:bg-gray-50 transition-colors min-w-[160px]"
+                >
+                  <Megaphone className="h-4 w-4 text-gray-400" />
+                  <span className={selectedCampaign ? "text-foreground font-medium" : "text-muted-foreground"}>
+                    {selectedCampaign ? selectedCampaign.nombre : "Campana"}
+                  </span>
+                  <ChevronDown className="h-4 w-4 text-gray-400 ml-auto" />
+                </button>
+
+                {campaignDropdownOpen && (
+                  <div className="absolute left-0 top-full mt-1 w-72 rounded-xl border border-border bg-white shadow-lg z-50">
+                    <div className="p-2">
+                      {/* Option to deselect */}
+                      <button
+                        onClick={() => { setSelectedCampaign(null); setCampaignDropdownOpen(false) }}
+                        className={`w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-left transition-colors ${!selectedCampaign ? "bg-primary/10 text-primary" : "hover:bg-gray-50 text-muted-foreground"}`}
+                      >
+                        Todas las campanas
+                      </button>
+                      {campaigns.map((campaign) => (
+                        <button
+                          key={campaign.id}
+                          onClick={() => {
+                            setSelectedCampaign(campaign)
+                            setCampaignDropdownOpen(false)
+                          }}
+                          className={`w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-left transition-colors ${
+                            selectedCampaign?.id === campaign.id
+                              ? "bg-primary/10 text-primary"
+                              : "hover:bg-gray-50 text-foreground"
+                          }`}
+                        >
+                          <div className="min-w-0 flex-1">
+                            <p className="font-medium truncate">{campaign.nombre}</p>
+                            <p className="text-xs text-muted-foreground">{campaign.total_leads} leads</p>
+                          </div>
+                          <Badge variant={statusVariant(campaign.estado)} className="shrink-0">
+                            {statusLabel(campaign.estado)}
+                          </Badge>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Right side: Admin button */}

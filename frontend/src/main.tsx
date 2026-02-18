@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { BrowserRouter } from "react-router-dom"
 import { Toaster } from "sonner"
 import { AccountProvider } from "./context/AccountContext"
+import { CampaignProvider } from "./context/CampaignContext"
 import App from "./App"
 import "./index.css"
 
@@ -22,18 +23,20 @@ createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <AccountProvider>
-          <App />
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              style: {
-                background: "#ffffff",
-                color: "#111827",
-                border: "1px solid #E5E7EB",
-                boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
-              },
-            }}
-          />
+          <CampaignProvider>
+            <App />
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                style: {
+                  background: "#ffffff",
+                  color: "#111827",
+                  border: "1px solid #E5E7EB",
+                  boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
+                },
+              }}
+            />
+          </CampaignProvider>
         </AccountProvider>
       </BrowserRouter>
     </QueryClientProvider>

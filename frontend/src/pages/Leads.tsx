@@ -131,6 +131,7 @@ export default function Leads() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border text-left">
+                    <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">ID</th>
                     <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">Fecha</th>
                     {columnNames.map((col) => (
                       <th key={col} className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
@@ -190,6 +191,9 @@ function LeadRow({
 }) {
   return (
     <tr className="hover:bg-gray-50 transition-colors">
+      <td className="px-6 py-4 text-sm font-mono font-medium text-foreground whitespace-nowrap">
+        {lead.id_lead}
+      </td>
       <td className="px-6 py-4 text-sm text-muted-foreground whitespace-nowrap">
         {formatDate(lead.created_at)}
       </td>
