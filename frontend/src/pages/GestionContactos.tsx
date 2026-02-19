@@ -334,7 +334,8 @@ function SelectorCampania({
   onEntrar: () => void
   isLoading: boolean
 }) {
-  const activas = campanias.filter(c => c.estado === "activa")
+  // Mostrar campañas activas o pausadas (no borradores ni finalizadas)
+  const disponibles = campanias.filter(c => c.estado === "activa" || c.estado === "pausada")
   
   return (
     <div className="flex flex-col items-center justify-center h-[70vh]">
@@ -345,12 +346,15 @@ function SelectorCampania({
         </div>
         
         <div className="space-y-2">
-          {activas.length === 0 ? (
+          {disponibles.length === 0 ? (
             <div className="text-center p-8 border rounded-lg bg-gray-50">
-              <p className="text-gray-500">No hay campañas activas</p>
+              <p className="text-gray-500">No hay campañas disponibles</p>
+              <p className="text-sm text-gray-400 mt-1">
+                Las campañas deben estar activas o pausadas para poder entrar
+              </p>
             </div>
           ) : (
-            activas.map((camp) => (
+            disponibles.map((camp) => (
               <button
                 key={camp.id}
                 onClick={() => onSelect(camp.id)}

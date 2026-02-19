@@ -102,6 +102,29 @@ export function useDeleteCampania(accountId: string) {
   })
 }
 
+export function useCambiarEstadoCampania(accountId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ campaniaId, estado }: { campaniaId: string; estado: string }) => {
+      const { data } = await apiClient.patch<Campania>(
+        `/api/v1/admin/campanias/${campaniaId}/estado`,
+        { estado }
+      )
+      return data
+    },
+    onSuccess: (_, variables) => {
+      qc.invalidateQueries({ queryKey: ["campanias", accountId] })
+      const estadoMsg = variables.estado === "activa" ? "activada" : 
+                        variables.estado === "pausada" ? "pausada" : 
+                        variables.estado === "finalizada" ? "finalizada" : "actualizada"
+      toast.success(`Campaña ${estadoMsg}`)
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.detail || "Error al cambiar estado")
+    },
+  })
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Agentes en Campaña
 // ─────────────────────────────────────────────────────────────────────────────

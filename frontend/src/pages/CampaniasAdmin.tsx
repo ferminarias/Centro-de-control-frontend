@@ -13,6 +13,7 @@ import {
   useCreateCampania, 
   useUpdateCampania,
   useDeleteCampania,
+  useCambiarEstadoCampania,
 } from "@/hooks/useCampanias"
 import { useLeadBasesList } from "@/hooks/useLeadBases"
 import Modal from "@/components/ui/Modal"
@@ -29,6 +30,7 @@ export default function CampaniasAdmin() {
   const { data, isLoading, refetch } = useCampaniasList(accountId)
   const updateMutation = useUpdateCampania(accountId, "")
   const deleteMutation = useDeleteCampania(accountId)
+  const cambiarEstadoMutation = useCambiarEstadoCampania(accountId)
   
   const [showCreateModal, setShowCreateModal] = useState(false)
   
@@ -40,8 +42,9 @@ export default function CampaniasAdmin() {
     }
   }
   
-  const handleChangeEstado = async (_campania: any, nuevoEstado: EstadoCampania) => {
-    await updateMutation.mutateAsync({
+  const handleChangeEstado = async (campaniaId: string, nuevoEstado: EstadoCampania) => {
+    await cambiarEstadoMutation.mutateAsync({
+      campaniaId,
       estado: nuevoEstado
     })
   }
@@ -146,22 +149,26 @@ export default function CampaniasAdmin() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-1">
-                      {camp.estado === "activa" && (
+                      {/* Botón Activar (para borrador o pausada) */}
+                      {(camp.estado === "borrador" || camp.estado === "pausada") && (
                         <button
-                          onClick={() => handleChangeEstado(camp, "pausada")}
-                          className="p-1.5 text-yellow-600 hover:bg-yellow-50 rounded"
-                          title="Pausar"
-                        >
-                          <Pause className="h-4 w-4" />
-                        </button>
-                      )}
-                      {camp.estado === "pausada" && (
-                        <button
-                          onClick={() => handleChangeEstado(camp, "activa")}
-                          className="p-1.5 text-green-600 hover:bg-green-50 rounded"
-                          title="Activar"
+                          onClick={() => handleChangeEstado(camp.id, "activa")}
+                          disabled={cambiarEstadoMutation.isPending}
+                          className="p-1.5 text-green-600 hover:bg-green-50 rounded disabled:opacity-50"
+                          title="Activar campaña"
                         >
                           <Play className="h-4 w-4" />
+                        </button>
+                      )}
+                      {/* Botón Pausar (solo para activa) */}
+                      {camp.estado === "activa" && (
+                        <button
+                          onClick={() => handleChangeEstado(camp.id, "pausada")}
+                          disabled={cambiarEstadoMutation.isPending}
+                          className="p-1.5 text-yellow-600 hover:bg-yellow-50 rounded disabled:opacity-50"
+                          title="Pausar campaña"
+                        >
+                          <Pause className="h-4 w-4" />
                         </button>
                       )}
                       <button
