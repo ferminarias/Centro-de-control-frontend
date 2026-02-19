@@ -31,6 +31,7 @@ import CampaignDetail from "./pages/CampaignDetail"
 import GestionContactos from "./pages/GestionContactos"
 import CallRecords from "./pages/CallRecords"
 import DncList from "./pages/DncList"
+import FichaConfigAdmin from "./pages/FichaConfigAdmin"
 
 export default function App() {
   return (
@@ -63,6 +64,7 @@ export default function App() {
         <Route path="/admin/tipificaciones" element={<TipificacionesAdmin />} />
         <Route path="/admin/campanias" element={<CampaniasAdmin />} />
         <Route path="/admin/auditoria" element={<AuditoriaPage />} />
+        <Route path="/admin/ficha-config" element={<FichaConfigAdmin />} />
         <Route path="/reportes" element={<ReportesPage />} />
         <Route path="/reportes/bases" element={<ReporteBasesPage />} />
         <Route path="/reportes/agentes" element={<MetricasAgentesPage />} />

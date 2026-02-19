@@ -16,5 +16,8 @@ export * from "./useTipificaciones";
 // Campañas (Contact Center)
 export * from "./useCampanias";
 
+// Ficha Config
+export * from "./useFichaConfig";
+
 // UI
 export * from "./useToast";

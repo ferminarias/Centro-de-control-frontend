@@ -2,15 +2,13 @@
  * Módulo de Reportes y Monitores - Contact Center
  * Dashboard principal con navegación a sub-módulos
  */
-import { useState } from "react"
-import { 
-  BarChart3, Users, Database, Activity, 
-  Monitor, FileSpreadsheet, ChevronRight, TrendingUp,
-  Phone, Clock, Target, AlertCircle
+import {
+  Users, Database,
+  Monitor, FileSpreadsheet, ChevronRight,
+  Target, AlertCircle
 } from "lucide-react"
 import { useAccount } from "@/context/AccountContext"
 import { useDashboardStats } from "@/hooks/useReportes"
-import { TableSkeleton } from "@/components/ui/Loading"
 import { cn } from "@/lib/utils"
 import { Link } from "react-router-dom"
 

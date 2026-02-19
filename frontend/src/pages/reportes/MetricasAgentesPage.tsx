@@ -2,9 +2,9 @@
  * Métricas de Agentes - Productividad y tiempos
  */
 import { useState } from "react"
-import { 
-  Users, ChevronLeft, Clock, Target, 
-  Phone, TrendingUp, Calendar
+import {
+  Users, ChevronLeft, Clock, Target,
+  Calendar
 } from "lucide-react"
 import { useAccount } from "@/context/AccountContext"
 import { useMetricasAgentes } from "@/hooks/useReportes"
