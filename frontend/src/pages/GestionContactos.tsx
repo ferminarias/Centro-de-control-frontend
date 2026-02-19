@@ -21,6 +21,7 @@ import Modal from "@/components/ui/Modal"
 import Badge from "@/components/ui/Badge"
 import { cn } from "@/lib/utils"
 import type { Ficha } from "@/types/campania"
+import type { FichaCampoConfig } from "@/types/fichaConfig"
 
 interface Props {
   campaniaId?: string
@@ -175,7 +176,7 @@ export default function GestionContactos({ campaniaId: initialCampaniaId }: Prop
       <div className="flex-1 overflow-hidden flex">
         {/* Panel izquierdo: Datos del contacto */}
         <div className="w-1/2 border-r overflow-y-auto p-4">
-          <DatosContacto lead={ficha?.lead} />
+          <DatosContacto lead={ficha?.lead} fichaConfig={ficha?.ficha_config?.campos} />
         </div>
         
         {/* Panel derecho: Gestión */}
@@ -398,11 +399,111 @@ function SelectorCampania({
   )
 }
 
-function DatosContacto({ lead }: { lead?: Ficha["lead"] }) {
+function DatosContacto({ lead, fichaConfig }: { lead?: Ficha["lead"]; fichaConfig?: FichaCampoConfig[] }) {
   if (!lead) return null
-  
+
   const datos = lead.datos || {}
-  
+
+  // If we have a config, render config-driven layout
+  if (fichaConfig && fichaConfig.length > 0) {
+    const visible = fichaConfig
+      .filter((c) => c.visible)
+      .sort((a, b) => a.orden - b.orden)
+
+    const headerCampos = visible.filter((c) => c.seccion === "header")
+    const telefonosCampos = visible.filter((c) => c.seccion === "telefonos")
+    const datosCampos = visible.filter((c) => c.seccion === "datos")
+
+    return (
+      <div className="space-y-6">
+        {/* Header section */}
+        {headerCampos.length > 0 && (
+          <div className="flex items-center gap-3 pb-4 border-b">
+            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <User className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              {headerCampos.map((campo, i) => (
+                i === 0 ? (
+                  <h2 key={campo.key} className="text-xl font-semibold">
+                    {datos[campo.key] ?? "—"}
+                  </h2>
+                ) : (
+                  <p key={campo.key} className="text-sm text-gray-500">
+                    {datos[campo.key] ?? "—"}
+                  </p>
+                )
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Telefonos section */}
+        {telefonosCampos.length > 0 && (
+          <div className="space-y-2">
+            <h3 className="font-medium text-sm text-gray-600 uppercase">Teléfonos</h3>
+            <div className="space-y-2">
+              {telefonosCampos.map((campo) => {
+                const val = datos[campo.key]
+                if (!val) return null
+                return (
+                  <a
+                    key={campo.key}
+                    href={`tel:${val}`}
+                    className="flex items-center gap-2 p-3 border rounded-lg hover:bg-gray-50"
+                  >
+                    <Phone className="h-5 w-5 text-green-600" />
+                    <span className="flex-1">{val}</span>
+                    <Badge variant="success">{campo.label}</Badge>
+                  </a>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Datos section */}
+        {datosCampos.length > 0 && (
+          <div className="space-y-2">
+            <h3 className="font-medium text-sm text-gray-600 uppercase">Datos del contacto</h3>
+            <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+              {datosCampos.map((campo) => (
+                <div key={campo.key} className="flex justify-between py-1 border-b border-gray-100 last:border-0">
+                  <span className="text-sm text-gray-600">{campo.label}</span>
+                  <span className="text-sm font-medium">{datos[campo.key] != null ? String(datos[campo.key]) : "—"}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Última gestión */}
+        {lead.tipificacion && (
+          <div className="space-y-2">
+            <h3 className="font-medium text-sm text-gray-600 uppercase">Última gestión</h3>
+            <div className="p-3 bg-blue-50 rounded-lg">
+              <span
+                className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                style={{
+                  backgroundColor: lead.tipificacion.color + "20",
+                  color: lead.tipificacion.color
+                }}
+              >
+                {lead.tipificacion.nombre}
+              </span>
+              {lead.subtipificacion && (
+                <span className="text-sm text-gray-600 ml-2">
+                  {lead.subtipificacion.nombre}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // Fallback: no config → show everything (original behavior)
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 pb-4 border-b">
@@ -418,7 +519,7 @@ function DatosContacto({ lead }: { lead?: Ficha["lead"] }) {
           </p>
         </div>
       </div>
-      
+
       {/* Teléfonos */}
       <div className="space-y-2">
         <h3 className="font-medium text-sm text-gray-600 uppercase">Teléfonos</h3>
@@ -445,7 +546,7 @@ function DatosContacto({ lead }: { lead?: Ficha["lead"] }) {
           )}
         </div>
       </div>
-      
+
       {/* Datos del lead */}
       <div className="space-y-2">
         <h3 className="font-medium text-sm text-gray-600 uppercase">Datos del contacto</h3>
@@ -460,17 +561,17 @@ function DatosContacto({ lead }: { lead?: Ficha["lead"] }) {
             ))}
         </div>
       </div>
-      
+
       {/* Historial (si existe) */}
       {lead.tipificacion && (
         <div className="space-y-2">
           <h3 className="font-medium text-sm text-gray-600 uppercase">Última gestión</h3>
           <div className="p-3 bg-blue-50 rounded-lg">
-            <span 
+            <span
               className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
-              style={{ 
+              style={{
                 backgroundColor: lead.tipificacion.color + "20",
-                color: lead.tipificacion.color 
+                color: lead.tipificacion.color
               }}
             >
               {lead.tipificacion.nombre}

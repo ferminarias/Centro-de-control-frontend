@@ -133,6 +133,9 @@ export interface Ficha {
   }
   historial: any[]
   script?: string
+  ficha_config?: {
+    campos: import("./fichaConfig").FichaCampoConfig[]
+  } | null
 }
 
 export interface GestionFichaRequest {
