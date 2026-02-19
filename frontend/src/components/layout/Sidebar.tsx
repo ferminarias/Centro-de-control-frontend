@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { NavLink, useLocation } from "react-router-dom"
-import { Database, Users, HardDrive, ChevronDown, Layers, GitBranch, ArrowRightLeft, Package, Shield, UserCog, ShieldCheck, Webhook, Zap, RefreshCw, Phone, Server, Cable, Headphones, ClipboardList, Megaphone, PhoneCall, PhoneOff, Tag, BarChart3 } from "lucide-react"
+import { Database, Users, HardDrive, ChevronDown, Layers, GitBranch, ArrowRightLeft, Package, Shield, UserCog, ShieldCheck, Webhook, Zap, RefreshCw, Phone, Server, Cable, Headphones, ClipboardList, Megaphone, PhoneCall, PhoneOff, Tag, BarChart3, History } from "lucide-react"
 import { useAccount } from "@/context/AccountContext"
 import { cn } from "@/lib/utils"
 
@@ -436,6 +436,20 @@ export default function Sidebar() {
                 >
                   <Tag className="h-4 w-4" />
                   Tipificaciones
+                </NavLink>
+                <NavLink
+                  to="/admin/auditoria"
+                  className={({ isActive }) =>
+                    cn(
+                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-primary/10 text-primary"
+                        : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
+                    )
+                  }
+                >
+                  <History className="h-4 w-4" />
+                  Auditoría
                 </NavLink>
               </div>
             )}

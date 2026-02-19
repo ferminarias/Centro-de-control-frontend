@@ -21,6 +21,7 @@ import VoipAgents from "./pages/VoipAgents"
 import Dispositions from "./pages/Dispositions"
 import TipificacionesAdmin from "./pages/TipificacionesAdmin"
 import CampaniasAdmin from "./pages/CampaniasAdmin"
+import AuditoriaPage from "./pages/AuditoriaPage"
 import Campaigns from "./pages/Campaigns"
 import ReportesPage from "./pages/reportes/ReportesPage"
 import ReporteBasesPage from "./pages/reportes/ReporteBasesPage"
@@ -61,6 +62,7 @@ export default function App() {
         <Route path="/admin/roles" element={<RolesAdmin />} />
         <Route path="/admin/tipificaciones" element={<TipificacionesAdmin />} />
         <Route path="/admin/campanias" element={<CampaniasAdmin />} />
+        <Route path="/admin/auditoria" element={<AuditoriaPage />} />
         <Route path="/reportes" element={<ReportesPage />} />
         <Route path="/reportes/bases" element={<ReporteBasesPage />} />
         <Route path="/reportes/agentes" element={<MetricasAgentesPage />} />
