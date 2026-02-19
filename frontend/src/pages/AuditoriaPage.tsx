@@ -3,10 +3,10 @@
  * Visualiza el historial de cambios en entidades
  */
 import { useState } from "react"
-import { 
-  History, Filter, User, Database, FileText, 
+import {
+  History, Filter, User, Database,
   Tag, CheckSquare, StickyNote, ChevronLeft, X,
-  Calendar, Clock, ArrowRightLeft
+  Clock, ArrowRightLeft
 } from "lucide-react"
 import { useAccount } from "@/context/AccountContext"
 import { useAuditLogs } from "@/hooks/useCrmExtras"
@@ -14,7 +14,6 @@ import { useUsersList } from "@/hooks/useUsers"
 import { TableSkeleton } from "@/components/ui/Loading"
 import EmptyState from "@/components/ui/EmptyState"
 import Badge from "@/components/ui/Badge"
-import { cn } from "@/lib/utils"
 import { Link } from "react-router-dom"
 
 const ENTIDADES = [
@@ -59,7 +58,7 @@ export default function AuditoriaPage() {
   const { data: usersData } = useUsersList(accountId)
   
   const logs = logsData?.items || []
-  const users = usersData || []
+  const users = usersData?.items || []
   
   const clearFilters = () => {
     setEntidadTipo("")
@@ -276,25 +275,18 @@ export default function AuditoriaPage() {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        {log.cambios && Object.keys(log.cambios).length > 0 ? (
+                        {log.campo ? (
                           <div className="text-xs space-y-1">
-                            {Object.entries(log.cambios).slice(0, 3).map(([key, value]: [string, any]) => (
-                              <div key={key} className="flex items-center gap-1">
-                                <span className="text-muted-foreground">{key}:</span>
-                                {value.anterior !== undefined && (
-                                  <span className="text-red-600 line-through">{String(value.anterior).slice(0, 20)}</span>
-                                )}
-                                <ArrowRightLeft className="h-3 w-3 text-gray-400" />
-                                {value.nuevo !== undefined && (
-                                  <span className="text-green-600">{String(value.nuevo).slice(0, 20)}</span>
-                                )}
-                              </div>
-                            ))}
-                            {Object.keys(log.cambios).length > 3 && (
-                              <span className="text-muted-foreground">
-                                +{Object.keys(log.cambios).length - 3} más...
-                              </span>
-                            )}
+                            <div className="flex items-center gap-1">
+                              <span className="text-muted-foreground">{log.campo}:</span>
+                              {log.valor_anterior !== undefined && (
+                                <span className="text-red-600 line-through">{String(log.valor_anterior).slice(0, 20)}</span>
+                              )}
+                              <ArrowRightLeft className="h-3 w-3 text-gray-400" />
+                              {log.valor_nuevo !== undefined && (
+                                <span className="text-green-600">{String(log.valor_nuevo).slice(0, 20)}</span>
+                              )}
+                            </div>
                           </div>
                         ) : (
                           <span className="text-sm text-muted-foreground">-</span>

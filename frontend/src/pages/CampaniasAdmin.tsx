@@ -8,10 +8,9 @@ import {
   Play, Pause, Trash2, Eye
 } from "lucide-react"
 import { useAccount } from "@/context/AccountContext"
-import { 
-  useCampaniasList, 
-  useCreateCampania, 
-  useUpdateCampania,
+import {
+  useCampaniasList,
+  useCreateCampania,
   useDeleteCampania,
   useCambiarEstadoCampania,
 } from "@/hooks/useCampanias"
@@ -28,7 +27,6 @@ export default function CampaniasAdmin() {
   const accountId = selectedAccount?.id ?? ""
   
   const { data, isLoading, refetch } = useCampaniasList(accountId)
-  const updateMutation = useUpdateCampania(accountId, "")
   const deleteMutation = useDeleteCampania(accountId)
   const cambiarEstadoMutation = useCambiarEstadoCampania(accountId)
   

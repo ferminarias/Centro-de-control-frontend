@@ -13,7 +13,6 @@ import {
   Save,
   User,
   Phone,
-  FileText,
 } from "lucide-react"
 import {
   DndContext,

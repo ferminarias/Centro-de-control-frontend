@@ -2,8 +2,8 @@
  * Reporte de Bases - Consulta y exportación a Excel
  */
 import { useState } from "react"
-import { 
-  Database, Download, Filter, Search, 
+import {
+  Database, Filter,
   FileSpreadsheet, ChevronLeft, X
 } from "lucide-react"
 import { useAccount } from "@/context/AccountContext"
@@ -14,7 +14,6 @@ import { useUsersList } from "@/hooks/useUsers"
 import { TableSkeleton } from "@/components/ui/Loading"
 import EmptyState from "@/components/ui/EmptyState"
 import Badge from "@/components/ui/Badge"
-import { cn } from "@/lib/utils"
 import { Link } from "react-router-dom"
 import { exportReporteBasesToExcel } from "@/lib/export"
 import { toast } from "sonner"
@@ -57,7 +56,7 @@ export default function ReporteBasesPage() {
   
   const bases = basesData?.items || []
   const tipificaciones = tipificacionesData?.items || []
-  const users = usersData || []
+  const users = usersData?.items || []
   
   const handleExportExcel = () => {
     if (!reporte?.items.length) {
@@ -264,7 +263,7 @@ export default function ReporteBasesPage() {
                       <td className="px-4 py-3 text-sm">{item.base_nombre}</td>
                       <td className="px-4 py-3 text-sm">{item.campania_nombre}</td>
                       <td className="px-4 py-3">
-                        <Badge variant={ESTADO_COLORS[item.estado] || "default"}>
+                        <Badge variant={(ESTADO_COLORS[item.estado] || "default") as "default" | "success" | "danger" | "warning" | "info" | "secondary"}>
                           {item.estado}
                         </Badge>
                       </td>

@@ -60,7 +60,7 @@ export function useSaveFichaConfig(accountId: string) {
       )
       return data
     },
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["ficha-config", accountId] })
       toast.success("Configuración de ficha guardada")
     },
