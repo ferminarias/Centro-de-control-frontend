@@ -23,7 +23,7 @@ export function useAuth() {
   const { data: user, isLoading, error } = useQuery({
     queryKey: ["auth", "me"],
     queryFn: async () => {
-      const response = await apiClient.get<User>("/auth/me");
+      const response = await apiClient.get<User>("/api/v1/auth/me");
       return response.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
