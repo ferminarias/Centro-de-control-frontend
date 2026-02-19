@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, X, Edit2, Trash2, GripVertical, Check } from "lucide-react";
+import { Plus, Edit2, Trash2 } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import { cn } from "@/lib/utils";
 import type { TagResponse, TagCreate, TagUpdate } from "@/types";
@@ -8,7 +8,7 @@ interface TagManagerProps {
   tags: TagResponse[];
   isLoading?: boolean;
   onCreate: (data: TagCreate) => void;
-  onUpdate: (id: string, data: TagUpdate) => void;
+  onUpdate: (variables: { id: string; payload: TagUpdate }) => void;
   onDelete: (id: string) => void;
   isPendingCreate?: boolean;
   isPendingUpdate?: boolean;
@@ -76,10 +76,13 @@ export default function TagManager({
 
   const handleUpdate = () => {
     if (!editingTag) return;
-    onUpdate(editingTag.id, {
-      nombre,
-      color,
-      descripcion: descripcion || undefined,
+    onUpdate({
+      id: editingTag.id,
+      payload: {
+        nombre,
+        color,
+        descripcion: descripcion || undefined,
+      }
     });
     resetForm();
   };

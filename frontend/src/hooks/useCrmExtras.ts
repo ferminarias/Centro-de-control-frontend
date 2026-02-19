@@ -209,7 +209,7 @@ export function useNotas(leadId: string | undefined, params?: { page?: number; p
   });
 }
 
-export function useCreateNota(accountId: string, leadId: string) {
+export function useCreateNota(_accountId: string, leadId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (payload: NotaCreate) => createNota(leadId, payload),
@@ -224,7 +224,7 @@ export function useCreateNota(accountId: string, leadId: string) {
   });
 }
 
-export function useUpdateNota(accountId: string, leadId: string) {
+export function useUpdateNota(_accountId: string, leadId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, payload }: { id: string; payload: NotaUpdate }) =>
@@ -239,7 +239,7 @@ export function useUpdateNota(accountId: string, leadId: string) {
   });
 }
 
-export function useDeleteNota(accountId: string, leadId: string) {
+export function useDeleteNota(_accountId: string, leadId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteNota(id),

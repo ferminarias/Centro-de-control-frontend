@@ -30,3 +30,7 @@ export function Spinner({ className }: { className?: string }) {
     </div>
   )
 }
+
+export function Loading({ className }: { className?: string }) {
+  return <Spinner className={className} />
+}

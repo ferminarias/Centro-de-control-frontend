@@ -10,7 +10,6 @@ import {
   CheckCircle2,
   User,
   Tag,
-  StickyNote,
   ArrowUpRight,
   ArrowDownLeft,
 } from "lucide-react";

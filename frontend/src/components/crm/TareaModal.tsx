@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Phone, Mail, Calendar, FileText, Bell, Repeat } from "lucide-react";
+import { Phone, Mail, Calendar, FileText, Bell } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import { cn } from "@/lib/utils";
 import type { TareaCreate } from "@/types";

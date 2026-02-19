@@ -111,7 +111,7 @@ export function useRoleModulePermissions(roleId: string | undefined) {
 /**
  * Set role's permissions for a module
  */
-export function useSetRoleModulePermissions(accountId: string) {
+export function useSetRoleModulePermissions(_accountId: string) {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({ 
@@ -132,7 +132,7 @@ export function useSetRoleModulePermissions(accountId: string) {
 /**
  * Delete role's permissions for a module
  */
-export function useDeleteRoleModulePermissions(accountId: string) {
+export function useDeleteRoleModulePermissions(_accountId: string) {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({ roleId, moduleId }: { roleId: string; moduleId: string }) => 

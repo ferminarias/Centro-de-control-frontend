@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils";
 import type { TagResponse } from "@/types";
 
 interface TagSelectorProps {
-  tags: TagResponse[];
   selectedTags: string[];
   onChange: (tags: string[]) => void;
   availableTags: TagResponse[];
@@ -12,7 +11,6 @@ interface TagSelectorProps {
 }
 
 export default function TagSelector({
-  tags,
   selectedTags,
   onChange,
   availableTags,

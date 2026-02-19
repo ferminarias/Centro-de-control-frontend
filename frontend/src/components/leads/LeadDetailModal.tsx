@@ -4,7 +4,7 @@ import { Spinner } from "@/components/ui/Loading"
 import { useLeadDetail } from "@/hooks/useLeads"
 import { LeadCRMDetail } from "@/components/crm"
 import { formatDate } from "@/lib/utils"
-import { Phone, Mail, User, Building, MapPin, Tag } from "lucide-react"
+import { Phone, Mail, Building, MapPin, Tag } from "lucide-react"
 import type { LeadResponse } from "@/types"
 
 interface Props {
@@ -40,11 +40,16 @@ function LeadHeader({ lead }: { lead: LeadResponse }) {
   const datos = lead.datos || {}
   
   // Extraer campos comunes
-  const nombre = datos.nombre || datos.name || datos.full_name || datos.Nombre || "Sin nombre"
-  const email = datos.email || datos.Email || datos.correo || datos.Correo
-  const telefono = datos.telefono || datos.Telefono || datos.phone || datos.Phone || datos.celular || datos.Celular
-  const empresa = datos.empresa || datos.Empresa || datos.company || datos.Company
-  const ciudad = datos.ciudad || datos.Ciudad || datos.city || datos.City
+  const getString = (value: unknown): string | undefined => {
+    if (typeof value === 'string') return value
+    return undefined
+  }
+  
+  const nombre = getString(datos.nombre) || getString(datos.name) || getString(datos.full_name) || getString(datos.Nombre) || "Sin nombre"
+  const email = getString(datos.email) || getString(datos.Email) || getString(datos.correo) || getString(datos.Correo)
+  const telefono = getString(datos.telefono) || getString(datos.Telefono) || getString(datos.phone) || getString(datos.Phone) || getString(datos.celular) || getString(datos.Celular)
+  const empresa = getString(datos.empresa) || getString(datos.Empresa) || getString(datos.company) || getString(datos.Company)
+  const ciudad = getString(datos.ciudad) || getString(datos.Ciudad) || getString(datos.city) || getString(datos.City)
   
   return (
     <div className="border-b pb-4">

@@ -10,7 +10,7 @@ import { useUpdateLeadTipificacion, useBulkUpdateTipificacion } from "@/hooks/us
 import Modal from "@/components/ui/Modal"
 import Badge from "@/components/ui/Badge"
 import { cn } from "@/lib/utils"
-import type { TipificacionResponse, SubtipificacionResponse } from "@/types"
+
 
 interface TipificacionModalProps {
   open: boolean

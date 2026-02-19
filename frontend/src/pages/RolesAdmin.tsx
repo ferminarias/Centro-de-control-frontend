@@ -97,11 +97,7 @@ const ACTION_LABELS: Record<string, string> = {
 // Types
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface ModuleAction {
-  code: string
-  label: string
-  description?: string
-}
+
 
 interface Module {
   id: string
@@ -132,7 +128,7 @@ export default function RolesAdmin() {
   // Data fetching
   const { data: rolesData, isLoading: isLoadingRoles, isError: isErrorRoles, refetch: refetchRoles } = useRolesList(accountId)
   const { data: legacyPermsData } = useLegacyPermissions()
-  const { data: modulesData, isLoading: isLoadingModules, refetch: refetchModules } = useModules(accountId)
+  const { data: modulesData, isLoading: isLoadingModules } = useModules(accountId)
   const syncModulesMutation = useSyncModules(accountId)
   
   // Mutations

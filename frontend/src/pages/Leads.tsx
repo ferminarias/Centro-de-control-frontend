@@ -1,8 +1,9 @@
 import { useState, useMemo } from "react"
-import { Search, Download, Eye, Users } from "lucide-react"
+import { Search, Download, Eye, Users, Tag } from "lucide-react"
 import { useAccount } from "@/context/AccountContext"
-import { useLeadsList } from "@/hooks/useLeads"
+import { useLeadsList, useUpdateLeadTipificacion } from "@/hooks/useLeads"
 import { useFieldsList } from "@/hooks/useFields"
+import { useTipificacionesList } from "@/hooks/useTipificaciones"
 import { useDebounce } from "@/hooks/useDebounce"
 import { TableSkeleton } from "@/components/ui/Loading"
 import ErrorState from "@/components/ui/ErrorState"
@@ -133,7 +134,8 @@ export default function Leads() {
                   <tr className="border-b border-border text-left">
                     <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">ID</th>
                     <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">Fecha</th>
-                    {columnNames.map((col) => (
+                    <th className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">Tipificacion</th>
+                    {columnNames.slice(0, 3).map((col) => (
                       <th key={col} className="px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
                         {col}
                       </th>
@@ -150,7 +152,8 @@ export default function Leads() {
                     <LeadRow
                       key={lead.id}
                       lead={lead}
-                      columns={columnNames}
+                      columns={columnNames.slice(0, 3)}
+                      accountId={selectedAccount.id}
                       onView={() => setSelectedLead(lead.id)}
                     />
                   ))}
@@ -183,12 +186,26 @@ export default function Leads() {
 function LeadRow({
   lead,
   columns,
+  accountId,
   onView,
 }: {
   lead: LeadResponse
   columns: string[]
+  accountId: string
   onView: () => void
 }) {
+  const { data: tipificacionesData } = useTipificacionesList(accountId, false)
+  const updateTipificacion = useUpdateLeadTipificacion(accountId)
+  
+  const tipificaciones = tipificacionesData?.items ?? []
+  
+  const handleTipificacionChange = (tipificacionId: string) => {
+    updateTipificacion.mutate({
+      leadId: lead.id,
+      payload: { tipificacion_id: tipificacionId || null }
+    })
+  }
+  
   return (
     <tr className="hover:bg-gray-50 transition-colors">
       <td className="px-6 py-4 text-sm font-mono font-medium text-foreground whitespace-nowrap">
@@ -196,6 +213,26 @@ function LeadRow({
       </td>
       <td className="px-6 py-4 text-sm text-muted-foreground whitespace-nowrap">
         {formatDate(lead.created_at)}
+      </td>
+      <td className="px-6 py-2 whitespace-nowrap">
+        <select
+          value={lead.tipificacion_id || ""}
+          onChange={(e) => handleTipificacionChange(e.target.value)}
+          disabled={updateTipificacion.isPending}
+          className="text-xs rounded-md border border-gray-200 px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary min-w-[120px]"
+        >
+          <option value="">Sin tipificar</option>
+          {tipificaciones.map((tip) => (
+            <option key={tip.id} value={tip.id}>
+              {tip.nombre}
+            </option>
+          ))}
+        </select>
+        {lead.subtipificacion && (
+          <div className="text-xs text-gray-500 mt-1">
+            {lead.subtipificacion.nombre}
+          </div>
+        )}
       </td>
       {columns.length > 0 ? (
         columns.map((col) => {

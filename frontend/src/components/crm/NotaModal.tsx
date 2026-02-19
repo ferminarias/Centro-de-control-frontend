@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Lock, FileText, Eye } from "lucide-react";
+import { Lock, Eye } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import { cn } from "@/lib/utils";
 import type { NotaCreate } from "@/types";

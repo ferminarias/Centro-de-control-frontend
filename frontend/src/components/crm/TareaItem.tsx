@@ -13,7 +13,6 @@ import {
   AlertCircle,
   MoreVertical,
   Trash2,
-  Edit,
   Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";

@@ -4,8 +4,8 @@ import { X } from "lucide-react"
 interface ModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  title: string
-  description?: string
+  title: React.ReactNode
+  description?: React.ReactNode
   children: React.ReactNode
   wide?: boolean
 }

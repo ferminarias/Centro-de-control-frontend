@@ -112,7 +112,6 @@ export default function LeadCRMDetail({ lead }: LeadCRMDetailProps) {
               <span className="text-sm font-medium">Tags</span>
             </div>
             <TagSelector
-              tags={tags}
               selectedTags={selectedTagIds}
               onChange={handleTagsChange}
               availableTags={tags}
@@ -206,7 +205,7 @@ export default function LeadCRMDetail({ lead }: LeadCRMDetailProps) {
                     <TareaItem
                       key={tarea.id}
                       tarea={tarea}
-                      onToggleComplete={(id, completed) =>
+                      onToggleComplete={(id) =>
                         completarTarea(id)
                       }
                       onDelete={deleteTarea}
