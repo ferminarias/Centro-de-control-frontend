@@ -22,6 +22,10 @@ import Dispositions from "./pages/Dispositions"
 import TipificacionesAdmin from "./pages/TipificacionesAdmin"
 import CampaniasAdmin from "./pages/CampaniasAdmin"
 import Campaigns from "./pages/Campaigns"
+import ReportesPage from "./pages/reportes/ReportesPage"
+import ReporteBasesPage from "./pages/reportes/ReporteBasesPage"
+import MetricasAgentesPage from "./pages/reportes/MetricasAgentesPage"
+import MonitorPage from "./pages/reportes/MonitorPage"
 import CampaignDetail from "./pages/CampaignDetail"
 import GestionContactos from "./pages/GestionContactos"
 import CallRecords from "./pages/CallRecords"
@@ -57,6 +61,10 @@ export default function App() {
         <Route path="/admin/roles" element={<RolesAdmin />} />
         <Route path="/admin/tipificaciones" element={<TipificacionesAdmin />} />
         <Route path="/admin/campanias" element={<CampaniasAdmin />} />
+        <Route path="/reportes" element={<ReportesPage />} />
+        <Route path="/reportes/bases" element={<ReporteBasesPage />} />
+        <Route path="/reportes/agentes" element={<MetricasAgentesPage />} />
+        <Route path="/reportes/monitor" element={<MonitorPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

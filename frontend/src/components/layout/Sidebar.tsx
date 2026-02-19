@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { NavLink, useLocation } from "react-router-dom"
-import { Database, Users, HardDrive, ChevronDown, Layers, GitBranch, ArrowRightLeft, Package, Shield, UserCog, ShieldCheck, Webhook, Zap, RefreshCw, Phone, Server, Cable, Headphones, ClipboardList, Megaphone, PhoneCall, PhoneOff, Tag } from "lucide-react"
+import { Database, Users, HardDrive, ChevronDown, Layers, GitBranch, ArrowRightLeft, Package, Shield, UserCog, ShieldCheck, Webhook, Zap, RefreshCw, Phone, Server, Cable, Headphones, ClipboardList, Megaphone, PhoneCall, PhoneOff, Tag, BarChart3 } from "lucide-react"
 import { useAccount } from "@/context/AccountContext"
 import { cn } from "@/lib/utils"
 
@@ -341,6 +341,22 @@ export default function Sidebar() {
               </div>
             )}
           </div>
+
+          {/* Reportes */}
+          <NavLink
+            to="/reportes"
+            className={({ isActive }) =>
+              cn(
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                isActive
+                  ? "bg-primary/10 text-primary"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-foreground"
+              )
+            }
+          >
+            <BarChart3 className="h-5 w-5" />
+            Reportes
+          </NavLink>
 
           {/* Administración - Expandable */}
           <div>
