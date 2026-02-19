@@ -3,10 +3,10 @@
  * Pantalla principal para agentes donde reciben fichas y las gestionan
  */
 import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+
 import { 
   Phone, PhoneOff, Clock, User, FileText, Tag, 
-  ChevronRight, Save, SkipForward, History, Mic
+  ChevronRight, Save, SkipForward, History
 } from "lucide-react"
 import { useAccount } from "@/context/AccountContext"
 import { 
@@ -14,7 +14,6 @@ import {
   useSolicitarFicha, 
   useGestionarFicha,
   useSaltarFicha,
-  useFichaActual,
   useTipificacionesList 
 } from "@/hooks"
 import { useCampaniasList } from "@/hooks/useCampanias"
@@ -28,7 +27,6 @@ interface Props {
 }
 
 export default function GestionContactos({ campaniaId: initialCampaniaId }: Props) {
-  const navigate = useNavigate()
   const { selectedAccount } = useAccount()
   const [selectedCampaniaId, setSelectedCampaniaId] = useState<string | null>(
     initialCampaniaId || null
@@ -464,15 +462,15 @@ function DatosContacto({ lead }: { lead?: Ficha["lead"] }) {
         <div className="space-y-2">
           <h3 className="font-medium text-sm text-gray-600 uppercase">Última gestión</h3>
           <div className="p-3 bg-blue-50 rounded-lg">
-            <Badge 
-              variant="info" 
+            <span 
+              className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
               style={{ 
                 backgroundColor: lead.tipificacion.color + "20",
                 color: lead.tipificacion.color 
               }}
             >
               {lead.tipificacion.nombre}
-            </Badge>
+            </span>
             {lead.subtipificacion && (
               <span className="text-sm text-gray-600 ml-2">
                 {lead.subtipificacion.nombre}

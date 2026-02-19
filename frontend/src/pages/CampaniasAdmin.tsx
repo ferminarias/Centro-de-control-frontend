@@ -4,8 +4,8 @@
  */
 import { useState } from "react"
 import { 
-  Megaphone, Plus, Settings, Users, Database, 
-  Play, Pause, Square, Trash2, Eye, BarChart3
+  Megaphone, Plus, Database, 
+  Play, Pause, Trash2, Eye
 } from "lucide-react"
 import { useAccount } from "@/context/AccountContext"
 import { 
@@ -13,9 +13,8 @@ import {
   useCreateCampania, 
   useUpdateCampania,
   useDeleteCampania,
-  useCampaniaAgentes
 } from "@/hooks/useCampanias"
-import { useBasesList } from "@/hooks/useLeads"
+import { useLeadBasesList } from "@/hooks/useLeadBases"
 import Modal from "@/components/ui/Modal"
 import Badge from "@/components/ui/Badge"
 import { TableSkeleton } from "@/components/ui/Loading"
@@ -28,13 +27,10 @@ export default function CampaniasAdmin() {
   const accountId = selectedAccount?.id ?? ""
   
   const { data, isLoading, refetch } = useCampaniasList(accountId)
-  const createMutation = useCreateCampania(accountId)
   const updateMutation = useUpdateCampania(accountId, "")
   const deleteMutation = useDeleteCampania(accountId)
   
   const [showCreateModal, setShowCreateModal] = useState(false)
-  const [showDetailModal, setShowDetailModal] = useState(false)
-  const [selectedCampania, setSelectedCampania] = useState<any>(null)
   
   const campanias = data?.items || []
   
@@ -44,9 +40,8 @@ export default function CampaniasAdmin() {
     }
   }
   
-  const handleChangeEstado = async (campania: any, nuevoEstado: EstadoCampania) => {
+  const handleChangeEstado = async (_campania: any, nuevoEstado: EstadoCampania) => {
     await updateMutation.mutateAsync({
-      ...campania,
       estado: nuevoEstado
     })
   }
@@ -170,10 +165,6 @@ export default function CampaniasAdmin() {
                         </button>
                       )}
                       <button
-                        onClick={() => {
-                          setSelectedCampania(camp)
-                          setShowDetailModal(true)
-                        }}
                         className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
                         title="Ver detalle"
                       >
@@ -290,7 +281,7 @@ function CreateCampaniaModal({
   onSuccess: () => void
 }) {
   const createMutation = useCreateCampania(accountId)
-  const { data: basesData } = useBasesList(accountId)
+  const { data: basesData } = useLeadBasesList(accountId)
   
   const [formData, setFormData] = useState<CampaniaCreate>({
     nombre: "",
@@ -387,7 +378,7 @@ function CreateCampaniaModal({
             {bases.length === 0 ? (
               <p className="text-sm text-gray-500">No hay bases disponibles</p>
             ) : (
-              bases.map((base) => (
+              bases.map((base: any) => (
                 <label key={base.id} className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -395,7 +386,7 @@ function CreateCampaniaModal({
                     onChange={(e) => {
                       const newIds = e.target.checked
                         ? [...(formData.base_ids || []), base.id]
-                        : (formData.base_ids || []).filter(id => id !== base.id)
+                        : (formData.base_ids || []).filter((id: string) => id !== base.id)
                       setFormData({ ...formData, base_ids: newIds })
                     }}
                     className="rounded"

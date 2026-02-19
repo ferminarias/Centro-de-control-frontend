@@ -10,7 +10,6 @@ import type {
   CampaniaUpdate,
   CampaniaListResponse,
   CampaniaAgente,
-  ColaLead,
   ColaLeadListResponse,
   Ficha,
   GestionFichaRequest,
