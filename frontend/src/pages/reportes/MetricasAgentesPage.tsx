@@ -13,6 +13,9 @@ import { TableSkeleton } from "@/components/ui/Loading"
 import EmptyState from "@/components/ui/EmptyState"
 import { cn } from "@/lib/utils"
 import { Link } from "react-router-dom"
+import { exportMetricasAgentesToExcel } from "@/lib/export"
+import { toast } from "sonner"
+import { FileSpreadsheet } from "lucide-react"
 
 export default function MetricasAgentesPage() {
   const { selectedAccount } = useAccount()
@@ -58,6 +61,23 @@ export default function MetricasAgentesPage() {
             </p>
           </div>
         </div>
+        <button
+          onClick={() => {
+            if (!agentes.length) {
+              toast.error("No hay datos para exportar")
+              return
+            }
+            const fecha = new Date().toISOString().split("T")[0]
+            const fileName = `metricas-agentes-${fecha}`
+            exportMetricasAgentesToExcel(agentes, fileName)
+            toast.success("Excel descargado correctamente")
+          }}
+          disabled={!agentes.length || isLoading}
+          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <FileSpreadsheet className="h-4 w-4" />
+          Exportar Excel
+        </button>
       </div>
       
       {/* Filters */}

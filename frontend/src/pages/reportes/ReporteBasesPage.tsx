@@ -16,6 +16,8 @@ import EmptyState from "@/components/ui/EmptyState"
 import Badge from "@/components/ui/Badge"
 import { cn } from "@/lib/utils"
 import { Link } from "react-router-dom"
+import { exportReporteBasesToExcel } from "@/lib/export"
+import { toast } from "sonner"
 
 const ESTADO_COLORS: Record<string, string> = {
   pendiente: "default",
@@ -58,8 +60,20 @@ export default function ReporteBasesPage() {
   const users = usersData || []
   
   const handleExportExcel = () => {
-    // TODO: Implementar exportación a Excel
-    alert("Exportación a Excel - Próximamente")
+    if (!reporte?.items.length) {
+      toast.error("No hay datos para exportar")
+      return
+    }
+    
+    // Generar nombre de archivo con fecha
+    const fecha = new Date().toISOString().split("T")[0]
+    const baseNombre = filters.base_id 
+      ? bases.find(b => b.id === filters.base_id)?.nombre 
+      : "todas-las-bases"
+    const fileName = `reporte-bases-${baseNombre}-${fecha}`
+    
+    exportReporteBasesToExcel(reporte.items, fileName)
+    toast.success("Excel descargado correctamente")
   }
   
   const clearFilters = () => {
@@ -95,10 +109,12 @@ export default function ReporteBasesPage() {
         </div>
         <button
           onClick={handleExportExcel}
-          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          disabled={!reporte?.items.length || isLoading}
+          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <FileSpreadsheet className="h-4 w-4" />
           Exportar Excel
+          {reporte?.items.length ? ` (${reporte.total})` : ""}
         </button>
       </div>
       
