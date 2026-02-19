@@ -324,6 +324,20 @@ export default function Sidebar() {
                   <PhoneOff className="h-4 w-4" />
                   Lista DNC
                 </NavLink>
+                <NavLink
+                  to="/callcenter/gestion"
+                  className={({ isActive }) =>
+                    cn(
+                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-primary/10 text-primary"
+                        : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
+                    )
+                  }
+                >
+                  <Headphones className="h-4 w-4" />
+                  Gestión Contactos
+                </NavLink>
               </div>
             )}
           </div>
@@ -378,6 +392,20 @@ export default function Sidebar() {
                 >
                   <ShieldCheck className="h-4 w-4" />
                   Roles
+                </NavLink>
+                <NavLink
+                  to="/admin/campanias"
+                  className={({ isActive }) =>
+                    cn(
+                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-primary/10 text-primary"
+                        : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
+                    )
+                  }
+                >
+                  <Megaphone className="h-4 w-4" />
+                  Campañas
                 </NavLink>
                 <NavLink
                   to="/admin/tipificaciones"

@@ -13,5 +13,8 @@ export * from "./useCrmExtras";
 // Tipificaciones
 export * from "./useTipificaciones";
 
+// Campañas (Contact Center)
+export * from "./useCampanias";
+
 // UI
 export * from "./useToast";

@@ -20,8 +20,10 @@ import PbxNodes from "./pages/PbxNodes"
 import VoipAgents from "./pages/VoipAgents"
 import Dispositions from "./pages/Dispositions"
 import TipificacionesAdmin from "./pages/TipificacionesAdmin"
+import CampaniasAdmin from "./pages/CampaniasAdmin"
 import Campaigns from "./pages/Campaigns"
 import CampaignDetail from "./pages/CampaignDetail"
+import GestionContactos from "./pages/GestionContactos"
 import CallRecords from "./pages/CallRecords"
 import DncList from "./pages/DncList"
 
@@ -50,9 +52,11 @@ export default function App() {
         <Route path="/callcenter/campaigns/:campaignId" element={<CampaignDetail />} />
         <Route path="/callcenter/cdr" element={<CallRecords />} />
         <Route path="/callcenter/dnc" element={<DncList />} />
+        <Route path="/callcenter/gestion" element={<GestionContactos />} />
         <Route path="/admin/users" element={<UsersAdmin />} />
         <Route path="/admin/roles" element={<RolesAdmin />} />
         <Route path="/admin/tipificaciones" element={<TipificacionesAdmin />} />
+        <Route path="/admin/campanias" element={<CampaniasAdmin />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
