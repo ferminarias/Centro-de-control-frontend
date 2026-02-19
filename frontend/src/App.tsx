@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom"
 import Layout from "./components/layout/Layout"
 import Welcome from "./pages/Welcome"
+import Login from "./pages/Login"
 import Fields from "./pages/Fields"
 import Leads from "./pages/Leads"
 import Bases from "./pages/Bases"
@@ -18,6 +19,7 @@ import SipTrunks from "./pages/SipTrunks"
 import PbxNodes from "./pages/PbxNodes"
 import VoipAgents from "./pages/VoipAgents"
 import Dispositions from "./pages/Dispositions"
+import TipificacionesAdmin from "./pages/TipificacionesAdmin"
 import Campaigns from "./pages/Campaigns"
 import CampaignDetail from "./pages/CampaignDetail"
 import CallRecords from "./pages/CallRecords"
@@ -26,6 +28,7 @@ import DncList from "./pages/DncList"
 export default function App() {
   return (
     <Routes>
+      <Route path="/login" element={<Login />} />
       <Route element={<Layout />}>
         <Route path="/" element={<Welcome />} />
         <Route path="/fields" element={<Fields />} />
@@ -49,6 +52,7 @@ export default function App() {
         <Route path="/callcenter/dnc" element={<DncList />} />
         <Route path="/admin/users" element={<UsersAdmin />} />
         <Route path="/admin/roles" element={<RolesAdmin />} />
+        <Route path="/admin/tipificaciones" element={<TipificacionesAdmin />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

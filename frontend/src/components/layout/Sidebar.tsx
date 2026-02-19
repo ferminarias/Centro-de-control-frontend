@@ -1,391 +1,187 @@
-import { useState } from "react"
-import { NavLink, useLocation } from "react-router-dom"
-import { Database, Users, HardDrive, ChevronDown, Layers, GitBranch, ArrowRightLeft, Package, Shield, UserCog, ShieldCheck, Webhook, Zap, RefreshCw, Phone, Server, Cable, Headphones, ClipboardList, Megaphone, PhoneCall, PhoneOff } from "lucide-react"
-import { useAccount } from "@/context/AccountContext"
-import { cn } from "@/lib/utils"
+import { useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import { 
+  Database, Users, HardDrive, ChevronDown, Layers, GitBranch, ArrowRightLeft,
+  Package, RefreshCw, Webhook, Workflow, Phone, Megaphone, Headset, 
+  PhoneCall, PhoneOff, CheckCircle, Globe, Link, Server, Shield, UserCog, Lock
+} from "lucide-react";
+import { useAccount } from "@/context/AccountContext";
+import { usePermissions } from "@/hooks/usePermissions";
+import { cn } from "@/lib/utils";
+
+// Icon mapping for dynamic rendering
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  Database,
+  Users,
+  HardDrive,
+  Layers,
+  GitBranch,
+  ArrowRightLeft,
+  Package,
+  RefreshCw,
+  Webhook,
+  Workflow,
+  Phone,
+  Megaphone,
+  Headset,
+  PhoneCall,
+  PhoneOff,
+  CheckCircle,
+  Globe,
+  Link,
+  Server,
+  Shield,
+  UserCog,
+  Lock,
+};
 
 export default function Sidebar() {
-  const { selectedAccount } = useAccount()
-  const location = useLocation()
+  const { selectedAccount } = useAccount();
+  const { modules, isLoading } = usePermissions();
+  const location = useLocation();
 
-  const isBasesSection = location.pathname.startsWith("/bases") || location.pathname.startsWith("/datasources") || location.pathname.startsWith("/move-leads")
-  const isAdminSection = location.pathname.startsWith("/admin")
-  const isCallCenterSection = location.pathname.startsWith("/callcenter")
-  const [basesOpen, setBasesOpen] = useState(isBasesSection)
-  const [adminOpen, setAdminOpen] = useState(isAdminSection)
-  const [callCenterOpen, setCallCenterOpen] = useState(isCallCenterSection)
+  // Track expanded state for parent modules
+  const [expandedParents, setExpandedParents] = useState<Record<string, boolean>>(() => {
+    // Auto-expand if current route is under a parent
+    const initial: Record<string, boolean> = {};
+    const currentModule = modules?.find(m => m.ruta === location.pathname);
+    if (currentModule?.parent_code) {
+      initial[currentModule.parent_code] = true;
+    }
+    return initial;
+  });
 
-  if (!selectedAccount) return null
+  if (!selectedAccount) return null;
+
+  if (isLoading) {
+    return (
+      <aside className="fixed left-0 top-16 z-30 h-[calc(100vh-4rem)] w-56 border-r border-border bg-white">
+        <div className="flex h-full items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        </div>
+      </aside>
+    );
+  }
+
+  // Group modules by parent
+  const parentModules = modules?.filter(m => !m.es_submodulo && m.puede_ver) || [];
+  const subModules = modules?.filter(m => m.es_submodulo && m.puede_ver) || [];
+
+  const toggleParent = (code: string) => {
+    setExpandedParents(prev => ({ ...prev, [code]: !prev[code] }));
+  };
+
+  const isParentActive = (parentCode: string) => {
+    return subModules.some(
+      sub => sub.parent_code === parentCode && location.pathname.startsWith(sub.ruta)
+    );
+  };
 
   return (
-    <aside className="fixed left-0 top-16 z-30 h-[calc(100vh-4rem)] w-56 border-r border-border bg-white flex flex-col">
-      <div className="flex-1 overflow-y-auto px-3 py-4">
+    <aside className="fixed left-0 top-16 z-30 h-[calc(100vh-4rem)] w-56 border-r border-border bg-white">
+      <div className="px-3 py-4">
         <p className="px-3 mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Navegacion
+          Navegación
         </p>
         <nav className="space-y-1">
-          {/* Datos */}
-          <NavLink
-            to="/fields"
-            className={({ isActive }) =>
-              cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-foreground"
-              )
+          {parentModules.map(module => {
+            const Icon = ICON_MAP[module.icono || "Database"] || Database;
+            const childModules = subModules.filter(s => s.parent_code === module.codigo);
+            const hasChildren = childModules.length > 0;
+            const isExpanded = expandedParents[module.codigo] || isParentActive(module.codigo);
+            const isActive = location.pathname === module.ruta || isParentActive(module.codigo);
+
+            if (hasChildren) {
+              // Render as expandable parent
+              return (
+                <div key={module.codigo}>
+                  <button
+                    onClick={() => toggleParent(module.codigo)}
+                    className={cn(
+                      "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                      isActive
+                        ? "text-primary"
+                        : "text-gray-600 hover:bg-gray-50 hover:text-foreground"
+                    )}
+                  >
+                    <Icon className="h-5 w-5" />
+                    <span className="flex-1 text-left">{module.nombre}</span>
+                    <ChevronDown
+                      className={cn(
+                        "h-4 w-4 transition-transform",
+                        isExpanded ? "rotate-180" : ""
+                      )}
+                    />
+                  </button>
+
+                  {isExpanded && (
+                    <div className="ml-4 mt-1 space-y-1 border-l border-border pl-3">
+                      {/* Parent as first child (view action) */}
+                      <NavLink
+                        to={module.ruta}
+                        className={({ isActive: isChildActive }) =>
+                          cn(
+                            "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                            isChildActive
+                              ? "bg-primary/10 text-primary"
+                              : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
+                          )
+                        }
+                      >
+                        <Layers className="h-4 w-4" />
+                        {module.nombre}
+                      </NavLink>
+
+                      {/* Child modules */}
+                      {childModules.map(child => {
+                        const ChildIcon = ICON_MAP[child.icono || "Database"] || Database;
+                        return (
+                          <NavLink
+                            key={child.codigo}
+                            to={child.ruta}
+                            className={({ isActive: isChildActive }) =>
+                              cn(
+                                "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                                isChildActive
+                                  ? "bg-primary/10 text-primary"
+                                  : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
+                              )
+                            }
+                          >
+                            <ChildIcon className="h-4 w-4" />
+                            {child.nombre}
+                          </NavLink>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
             }
-          >
-            <Database className="h-5 w-5" />
-            Datos
-          </NavLink>
 
-          {/* Leads */}
-          <NavLink
-            to="/leads"
-            className={({ isActive }) =>
-              cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-foreground"
-              )
-            }
-          >
-            <Users className="h-5 w-5" />
-            Leads
-          </NavLink>
-
-          {/* Bases de Datos - Expandable */}
-          <div>
-            <button
-              onClick={() => setBasesOpen(!basesOpen)}
-              className={cn(
-                "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                isBasesSection
-                  ? "text-primary"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-foreground"
-              )}
-            >
-              <HardDrive className="h-5 w-5" />
-              <span className="flex-1 text-left">Bases de Datos</span>
-              <ChevronDown
-                className={cn(
-                  "h-4 w-4 transition-transform",
-                  basesOpen ? "rotate-180" : ""
-                )}
-              />
-            </button>
-
-            {basesOpen && (
-              <div className="ml-4 mt-1 space-y-1 border-l border-border pl-3">
-                <NavLink
-                  to="/bases"
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
-                    )
-                  }
-                >
-                  <Layers className="h-4 w-4" />
-                  Bases
-                </NavLink>
-                <NavLink
-                  to="/datasources"
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
-                    )
-                  }
-                >
-                  <GitBranch className="h-4 w-4" />
-                  DataSources
-                </NavLink>
-                <NavLink
-                  to="/move-leads"
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
-                    )
-                  }
-                >
-                  <ArrowRightLeft className="h-4 w-4" />
-                  Mover Leads
-                </NavLink>
-              </div>
-            )}
-          </div>
-
-          {/* Lotes */}
-          <NavLink
-            to="/lotes"
-            className={({ isActive }) =>
-              cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-foreground"
-              )
-            }
-          >
-            <Package className="h-5 w-5" />
-            Lotes
-          </NavLink>
-
-          {/* Actualizacion de datos */}
-          <NavLink
-            to="/bulk-update"
-            className={({ isActive }) =>
-              cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-foreground"
-              )
-            }
-          >
-            <RefreshCw className="h-5 w-5" />
-            Actualizar datos
-          </NavLink>
-
-          {/* Webhooks */}
-          <NavLink
-            to="/webhooks"
-            className={({ isActive }) =>
-              cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-foreground"
-              )
-            }
-          >
-            <Webhook className="h-5 w-5" />
-            Webhooks
-          </NavLink>
-
-          {/* Automatizaciones */}
-          <NavLink
-            to="/automations"
-            className={({ isActive }) =>
-              cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-foreground"
-              )
-            }
-          >
-            <Zap className="h-5 w-5" />
-            Automatizaciones
-          </NavLink>
-
-          {/* Call Center - Expandable */}
-          <div>
-            <button
-              onClick={() => setCallCenterOpen(!callCenterOpen)}
-              className={cn(
-                "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                isCallCenterSection
-                  ? "text-primary"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-foreground"
-              )}
-            >
-              <Phone className="h-5 w-5" />
-              <span className="flex-1 text-left">Call Center</span>
-              <ChevronDown
-                className={cn(
-                  "h-4 w-4 transition-transform",
-                  callCenterOpen ? "rotate-180" : ""
-                )}
-              />
-            </button>
-
-            {callCenterOpen && (
-              <div className="ml-4 mt-1 space-y-1 border-l border-border pl-3">
-                <NavLink
-                  to="/callcenter/providers"
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
-                    )
-                  }
-                >
-                  <Server className="h-4 w-4" />
-                  Proveedores SIP
-                </NavLink>
-                <NavLink
-                  to="/callcenter/trunks"
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
-                    )
-                  }
-                >
-                  <Cable className="h-4 w-4" />
-                  Troncales
-                </NavLink>
-                <NavLink
-                  to="/callcenter/pbx"
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
-                    )
-                  }
-                >
-                  <Server className="h-4 w-4" />
-                  Nodos PBX
-                </NavLink>
-                <NavLink
-                  to="/callcenter/agents"
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
-                    )
-                  }
-                >
-                  <Headphones className="h-4 w-4" />
-                  Agentes
-                </NavLink>
-                <NavLink
-                  to="/callcenter/dispositions"
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
-                    )
-                  }
-                >
-                  <ClipboardList className="h-4 w-4" />
-                  Tipificaciones
-                </NavLink>
-                <NavLink
-                  to="/callcenter/campaigns"
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
-                    )
-                  }
-                >
-                  <Megaphone className="h-4 w-4" />
-                  Campanas
-                </NavLink>
-                <NavLink
-                  to="/callcenter/cdr"
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
-                    )
-                  }
-                >
-                  <PhoneCall className="h-4 w-4" />
-                  CDR
-                </NavLink>
-                <NavLink
-                  to="/callcenter/dnc"
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
-                    )
-                  }
-                >
-                  <PhoneOff className="h-4 w-4" />
-                  Lista DNC
-                </NavLink>
-              </div>
-            )}
-          </div>
-
-          {/* Administracion - Expandable */}
-          <div>
-            <button
-              onClick={() => setAdminOpen(!adminOpen)}
-              className={cn(
-                "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                isAdminSection
-                  ? "text-primary"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-foreground"
-              )}
-            >
-              <Shield className="h-5 w-5" />
-              <span className="flex-1 text-left">Administracion</span>
-              <ChevronDown
-                className={cn(
-                  "h-4 w-4 transition-transform",
-                  adminOpen ? "rotate-180" : ""
-                )}
-              />
-            </button>
-
-            {adminOpen && (
-              <div className="ml-4 mt-1 space-y-1 border-l border-border pl-3">
-                <NavLink
-                  to="/admin/users"
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
-                    )
-                  }
-                >
-                  <UserCog className="h-4 w-4" />
-                  Usuarios
-                </NavLink>
-                <NavLink
-                  to="/admin/roles"
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
-                    )
-                  }
-                >
-                  <ShieldCheck className="h-4 w-4" />
-                  Roles
-                </NavLink>
-              </div>
-            )}
-          </div>
+            // Render as simple link (no children)
+            return (
+              <NavLink
+                key={module.codigo}
+                to={module.ruta}
+                className={({ isActive: isItemActive }) =>
+                  cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                    isItemActive
+                      ? "bg-primary/10 text-primary"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-foreground"
+                  )
+                }
+              >
+                <Icon className="h-5 w-5" />
+                {module.nombre}
+              </NavLink>
+            );
+          })}
         </nav>
       </div>
 
-      <div className="shrink-0 p-3 border-t border-border">
+      <div className="absolute bottom-0 left-0 right-0 p-3 border-t border-border">
         <div className="rounded-lg bg-gray-50 p-3">
           <p className="text-xs font-medium text-foreground truncate">{selectedAccount.nombre}</p>
           <p className="text-[10px] text-muted-foreground font-mono truncate mt-0.5">
@@ -394,5 +190,5 @@ export default function Sidebar() {
         </div>
       </div>
     </aside>
-  )
+  );
 }

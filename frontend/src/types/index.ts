@@ -71,6 +71,30 @@ export interface LeadResponse {
   lote_nombre: string | null
   datos: Record<string, unknown>
   created_at: string
+  // CRM fields
+  score?: number
+  temperatura?: 'frio' | 'templado' | 'caliente'
+  tipificacion_id?: string
+  tipificacion?: {
+    id: string
+    nombre: string
+    color: string
+  }
+  subtipificacion_id?: string
+  subtipificacion?: {
+    id: string
+    nombre: string
+    color: string
+  }
+  assigned_to_id?: string
+  assigned_to?: {
+    id: string
+    nombre: string
+    email: string
+  }
+  assigned_at?: string
+  assigned_by_rule?: string
+  updated_at?: string
 }
 
 export interface BulkUpdateResponse {
@@ -602,4 +626,331 @@ export interface IngestResponse {
   unknown_fields: string[]
   auto_create_enabled: boolean
   fields_created: string[] | null
+}
+
+// ── UI Modules (Permissions) ──
+
+export interface UIModuleResponse {
+  id: string
+  cuenta_id: string | null
+  codigo: string
+  nombre: string
+  descripcion?: string
+  ruta: string
+  icono?: string
+  orden: number
+  es_submodulo: boolean
+  parent_code?: string
+  acciones: Record<string, { label: string; description?: string }>
+  es_sistema: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface UIModuleListResponse {
+  items: UIModuleResponse[]
+  total: number
+}
+
+export interface ModulePermissionResponse {
+  module_id: string
+  codigo: string
+  nombre: string
+  acciones_permitidas: string[]
+}
+
+// ── Tipificaciones ──
+
+export interface SubtipificacionResponse {
+  id: string
+  tipificacion_id: string
+  cuenta_id: string
+  nombre: string
+  descripcion?: string
+  color?: string
+  orden: number
+  activo: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface TipificacionResponse {
+  id: string
+  cuenta_id: string
+  nombre: string
+  descripcion?: string
+  color: string
+  orden: number
+  activo: boolean
+  es_final: boolean
+  subtipificaciones: SubtipificacionResponse[]
+  total_subtipificaciones: number
+  total_leads: number
+  created_at: string
+  updated_at: string
+}
+
+export interface TipificacionListResponse {
+  items: TipificacionResponse[]
+  total: number
+}
+
+export interface SubtipificacionListResponse {
+  items: SubtipificacionResponse[]
+  total: number
+}
+
+export interface TipificacionCreate {
+  nombre: string
+  descripcion?: string
+  color?: string
+  orden?: number
+  activo?: boolean
+  es_final?: boolean
+  subtipificaciones?: SubtipificacionCreate[]
+}
+
+export interface SubtipificacionCreate {
+  nombre: string
+  descripcion?: string
+  color?: string
+  orden?: number
+  activo?: boolean
+}
+
+export interface TipificacionUpdate {
+  nombre?: string
+  descripcion?: string
+  color?: string
+  orden?: number
+  activo?: boolean
+  es_final?: boolean
+}
+
+export interface SubtipificacionUpdate {
+  nombre?: string
+  descripcion?: string
+  color?: string
+  orden?: number
+  activo?: boolean
+}
+
+export interface LeadTipificacionUpdate {
+  tipificacion_id?: string | null
+  subtipificacion_id?: string | null
+}
+
+export interface TipificacionStats {
+  id: string
+  nombre: string
+  color: string
+  count: number
+  subtipificaciones: Array<{
+    id: string
+    nombre: string
+    color?: string
+    count: number
+  }>
+}
+
+// ── CRM Extras (Actividades, Tareas, Notas, Tags, AuditLog) ──
+
+export interface ActividadResponse {
+  id: string
+  cuenta_id: string
+  lead_id: string
+  user_id?: string
+  tipo: string
+  direccion: string
+  asunto?: string
+  descripcion?: string
+  metadata?: Record<string, any>
+  fecha_inicio: string
+  fecha_fin?: string
+  resultado?: string
+  created_at: string
+  updated_at: string
+  user_nombre?: string
+  lead_nombre?: string
+}
+
+export interface ActividadListResponse {
+  items: ActividadResponse[]
+  total: number
+}
+
+export interface ActividadCreate {
+  lead_id: string
+  tipo: string
+  direccion?: string
+  asunto?: string
+  descripcion?: string
+  metadata?: Record<string, any>
+  fecha_inicio: string
+  fecha_fin?: string
+  resultado?: string
+  user_id?: string
+}
+
+export interface ActividadUpdate {
+  tipo?: string
+  asunto?: string
+  descripcion?: string
+  metadata?: Record<string, any>
+  fecha_inicio?: string
+  fecha_fin?: string
+  resultado?: string
+}
+
+export interface TareaResponse {
+  id: string
+  cuenta_id: string
+  lead_id?: string
+  user_id?: string
+  titulo: string
+  descripcion?: string
+  tipo: string
+  prioridad: string
+  estado: string
+  fecha_vencimiento?: string
+  fecha_completada?: string
+  es_recurrente: boolean
+  frecuencia?: string
+  recordatorio_enviado: boolean
+  created_at: string
+  updated_at: string
+  user_nombre?: string
+  lead_nombre?: string
+}
+
+export interface TareaListResponse {
+  items: TareaResponse[]
+  total: number
+}
+
+export interface TareaStats {
+  pendientes: number
+  vencidas: number
+  completadas_hoy: number
+  completadas_semana: number
+}
+
+export interface TareaCreate {
+  lead_id?: string
+  titulo: string
+  descripcion?: string
+  tipo?: string
+  prioridad?: string
+  estado?: string
+  fecha_vencimiento?: string
+  es_recurrente?: boolean
+  frecuencia?: string
+  user_id?: string
+}
+
+export interface TareaUpdate {
+  titulo?: string
+  descripcion?: string
+  tipo?: string
+  prioridad?: string
+  estado?: string
+  fecha_vencimiento?: string
+  es_recurrente?: boolean
+  frecuencia?: string
+}
+
+export interface NotaResponse {
+  id: string
+  cuenta_id: string
+  lead_id: string
+  user_id?: string
+  contenido: string
+  tipo: string
+  es_privada: boolean
+  es_sistema: boolean
+  created_at: string
+  updated_at: string
+  user_nombre?: string
+}
+
+export interface NotaListResponse {
+  items: NotaResponse[]
+  total: number
+}
+
+export interface NotaCreate {
+  contenido: string
+  tipo?: string
+  es_privada?: boolean
+}
+
+export interface NotaUpdate {
+  contenido?: string
+  es_privada?: boolean
+}
+
+export interface TagResponse {
+  id: string
+  cuenta_id: string
+  nombre: string
+  color: string
+  descripcion?: string
+  es_sistema: boolean
+  orden: number
+  activo: boolean
+  created_at: string
+  total_leads?: number
+}
+
+export interface TagListResponse {
+  items: TagResponse[]
+  total: number
+}
+
+export interface TagCreate {
+  nombre: string
+  color?: string
+  descripcion?: string
+  orden?: number
+  activo?: boolean
+}
+
+export interface TagUpdate {
+  nombre?: string
+  color?: string
+  descripcion?: string
+  orden?: number
+  activo?: boolean
+}
+
+export interface LeadTimelineItem {
+  tipo: string
+  fecha: string
+  titulo: string
+  descripcion?: string
+  usuario?: string
+  metadata?: Record<string, any>
+}
+
+export interface AuditLogResponse {
+  id: string
+  cuenta_id: string
+  user_id?: string
+  entidad_tipo: string
+  entidad_id: string
+  accion: string
+  campo?: string
+  valor_anterior?: string
+  valor_nuevo?: string
+  snapshot?: Record<string, any>
+  ip_address?: string
+  endpoint?: string
+  created_at: string
+  user_nombre?: string
+  user_email?: string
+}
+
+export interface AuditLogListResponse {
+  items: AuditLogResponse[]
+  total: number
 }

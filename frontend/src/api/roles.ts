@@ -7,6 +7,10 @@ import type {
   PermissionsResponse,
 } from "@/types"
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Legacy Role API
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const getRoles = async (accountId: string) => {
   const { data } = await apiClient.get<RoleListResponse>(
     `/api/v1/admin/accounts/${accountId}/roles`
@@ -46,4 +50,53 @@ export const getPermissions = async () => {
     `/api/v1/admin/permissions`
   )
   return data
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// NEW: Modular Permission API
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface ModulePermission {
+  module_id: string
+  codigo: string
+  nombre: string
+  acciones_permitidas: string[]
+}
+
+/**
+ * Get role's module permissions
+ */
+export const getRoleModulePermissions = async (roleId: string): Promise<ModulePermission[]> => {
+  const { data } = await apiClient.get<ModulePermission[]>(
+    `/api/v1/roles/${roleId}/module-permissions`
+  )
+  return data
+}
+
+/**
+ * Set role's permissions for a module
+ */
+export const setRoleModulePermissions = async (
+  roleId: string,
+  moduleId: string,
+  accionesPermitidas: string[]
+): Promise<ModulePermission> => {
+  const { data } = await apiClient.put<ModulePermission>(
+    `/api/v1/roles/${roleId}/module-permissions`,
+    {
+      module_id: moduleId,
+      acciones_permitidas: accionesPermitidas,
+    }
+  )
+  return data
+}
+
+/**
+ * Delete role's permissions for a module
+ */
+export const deleteRoleModulePermissions = async (
+  roleId: string,
+  moduleId: string
+): Promise<void> => {
+  await apiClient.delete(`/api/v1/roles/${roleId}/module-permissions/${moduleId}`)
 }

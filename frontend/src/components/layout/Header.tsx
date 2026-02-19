@@ -18,8 +18,14 @@ const statusVariant = (s: CampaignStatus) => {
 export default function Header() {
   const { selectedAccount, setSelectedAccount } = useAccount()
   const { selectedCampaign, setSelectedCampaign } = useCampaign()
-  const { data } = useAccountsList()
+  const { data, error, isLoading } = useAccountsList()
   const { data: campaignsData } = useCampaigns(selectedAccount?.id ?? undefined)
+
+  // Debug: log API response
+  useEffect(() => {
+    console.log("Accounts data:", data)
+    console.log("Accounts error:", error)
+  }, [data, error])
 
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [campaignDropdownOpen, setCampaignDropdownOpen] = useState(false)
@@ -28,6 +34,9 @@ export default function Header() {
   const campaignDropdownRef = useRef<HTMLDivElement>(null)
 
   const accounts = data?.items?.filter((a) => a.activo) ?? []
+  
+  // Debug: show raw count
+  const rawCount = data?.items?.length ?? 0
   const campaigns = campaignsData?.items ?? []
 
   useEffect(() => {
@@ -92,9 +101,19 @@ export default function Header() {
               <div className="absolute left-0 top-full mt-1 w-72 rounded-xl border border-border bg-white shadow-lg z-50">
                 <div className="p-2">
                   {accounts.length === 0 ? (
-                    <p className="px-3 py-4 text-sm text-muted-foreground text-center">
-                      No hay cuentas activas
-                    </p>
+                    <div className="px-3 py-4 text-sm text-muted-foreground text-center">
+                      <p>No hay cuentas activas</p>
+                      {isLoading && <p className="text-xs mt-1">Cargando...</p>}
+                      {error && <p className="text-xs text-red-500 mt-1">Error: {error.message}</p>}
+                      {!isLoading && !error && rawCount > 0 && (
+                        <p className="text-xs text-orange-500 mt-1">
+                          {rawCount} cuenta(s) encontrada(s) pero inactiva(s)
+                        </p>
+                      )}
+                      {!isLoading && !error && rawCount === 0 && (
+                        <p className="text-xs text-gray-400 mt-1">API devolvió 0 cuentas</p>
+                      )}
+                    </div>
                   ) : (
                     accounts.map((account) => (
                       <button
