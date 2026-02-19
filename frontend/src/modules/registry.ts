@@ -431,6 +431,130 @@ export const MODULES_REGISTRY: Record<string, UIModule> = {
       assign: { label: "Tipificar Leads", description: "Asignar tipificaciones a leads" },
     },
   },
+  
+  campaniasAdmin: {
+    code: "campanias_admin",
+    name: "Campañas",
+    description: "Gestión de campañas de contact center",
+    route: "/admin/campanias",
+    icon: "Megaphone",
+    order: 34,
+    isSubModule: true,
+    parentCode: "admin",
+    actions: {
+      view: { label: "Ver", description: "Ver campañas" },
+      create: { label: "Crear", description: "Crear campañas" },
+      edit: { label: "Editar", description: "Editar campañas" },
+      delete: { label: "Eliminar", description: "Eliminar campañas" },
+      activate: { label: "Activar", description: "Activar campañas" },
+      pause: { label: "Pausar", description: "Pausar campañas" },
+      assignAgents: { label: "Asignar Agentes", description: "Asignar agentes a campañas" },
+      assignBases: { label: "Asignar Bases", description: "Asignar bases a campañas" },
+    },
+  },
+  
+  auditoriaAdmin: {
+    code: "auditoria_admin",
+    name: "Auditoría",
+    description: "Logs y auditoría del sistema",
+    route: "/admin/auditoria",
+    icon: "History",
+    order: 35,
+    isSubModule: true,
+    parentCode: "admin",
+    actions: {
+      view: { label: "Ver", description: "Ver logs de auditoría" },
+      export: { label: "Exportar", description: "Exportar logs" },
+      config: { label: "Configurar", description: "Configurar retención" },
+    },
+  },
+  
+  // ─────────────────────────────────────────────────────────────────────────
+  // Reportes (Nuevo módulo principal)
+  // ─────────────────────────────────────────────────────────────────────────
+  
+  reportes: {
+    code: "reportes",
+    name: "Reportes",
+    description: "Reportes y métricas del sistema",
+    route: "/reportes",
+    icon: "BarChart3",
+    order: 40,
+    actions: {
+      view: { label: "Ver", description: "Ver reportes" },
+      dashboard: { label: "Dashboard", description: "Ver dashboard general" },
+      bases: { label: "Reporte Bases", description: "Ver reporte de bases" },
+      agentes: { label: "Métricas Agentes", description: "Ver métricas de agentes" },
+      campanas: { label: "Métricas Campañas", description: "Ver métricas de campañas" },
+      monitor: { label: "Monitor", description: "Ver monitor en tiempo real" },
+      export: { label: "Exportar", description: "Exportar reportes a Excel" },
+    },
+  },
+  
+  reportesBases: {
+    code: "reportes_bases",
+    name: "Reporte de Bases",
+    description: "Gestión y exportación de bases",
+    route: "/reportes/bases",
+    icon: "Database",
+    order: 41,
+    isSubModule: true,
+    parentCode: "reportes",
+    actions: {
+      view: { label: "Ver", description: "Ver reporte de bases" },
+      export: { label: "Exportar Excel", description: "Exportar a Excel" },
+    },
+  },
+  
+  reportesAgentes: {
+    code: "reportes_agentes",
+    name: "Métricas de Agentes",
+    description: "Productividad y tiempos",
+    route: "/reportes/agentes",
+    icon: "Users",
+    order: 42,
+    isSubModule: true,
+    parentCode: "reportes",
+    actions: {
+      view: { label: "Ver", description: "Ver métricas de agentes" },
+      export: { label: "Exportar Excel", description: "Exportar a Excel" },
+    },
+  },
+  
+  reportesMonitor: {
+    code: "reportes_monitor",
+    name: "Monitor",
+    description: "Supervisión en tiempo real",
+    route: "/reportes/monitor",
+    icon: "Activity",
+    order: 43,
+    isSubModule: true,
+    parentCode: "reportes",
+    actions: {
+      view: { label: "Ver", description: "Ver monitor" },
+    },
+  },
+  
+  // ─────────────────────────────────────────────────────────────────────────
+  // Gestión de Contactos (Call Center Agent)
+  // ─────────────────────────────────────────────────────────────────────────
+  
+  gestionContactos: {
+    code: "gestion_contactos",
+    name: "Gestión de Contactos",
+    description: "Workspace para agentes de call center",
+    route: "/callcenter/gestion",
+    icon: "Headphones",
+    order: 50,
+    actions: {
+      view: { label: "Ver", description: "Acceder a gestión" },
+      entrarCampania: { label: "Entrar a Campaña", description: "Entrar a campaña" },
+      solicitarFicha: { label: "Solicitar Ficha", description: "Solicitar ficha" },
+      gestionarFicha: { label: "Gestionar Ficha", description: "Gestionar ficha" },
+      tipificar: { label: "Tipificar", description: "Tipificar contacto" },
+      saltarFicha: { label: "Saltar Ficha", description: "Saltar ficha" },
+    },
+  },
 };
 
 /** Type for module codes */
