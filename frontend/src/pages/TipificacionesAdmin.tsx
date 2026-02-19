@@ -59,7 +59,7 @@ export default function TipificacionesAdmin() {
   const createMutation = useCreateTipificacion(accountId)
   const updateMutation = useUpdateTipificacion(accountId)
   const deleteMutation = useDeleteTipificacion(accountId)
-  const createSubMutation = useCreateSubtipificacion(accountId, "")
+  const createSubMutation = useCreateSubtipificacion(accountId)
   const updateSubMutation = useUpdateSubtipificacion(accountId)
   const deleteSubMutation = useDeleteSubtipificacion(accountId)
 
@@ -180,7 +180,10 @@ export default function TipificacionesAdmin() {
         { onSuccess: () => setShowSubModal(false) }
       )
     } else {
-      createSubMutation.mutate(payload, { onSuccess: () => setShowSubModal(false) })
+      createSubMutation.mutate(
+        { tipificacionId: parentTipId, payload },
+        { onSuccess: () => setShowSubModal(false) }
+      )
     }
   }
 

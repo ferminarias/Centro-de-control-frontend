@@ -96,13 +96,14 @@ export function useSubtipificacionesList(tipificacionId: string | undefined, inc
   })
 }
 
-export function useCreateSubtipificacion(accountId: string, tipificacionId: string) {
+export function useCreateSubtipificacion(accountId: string) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (payload: SubtipificacionCreate) => createSubtipificacion(tipificacionId, payload),
-    onSuccess: () => {
+    mutationFn: ({ tipificacionId, payload }: { tipificacionId: string; payload: SubtipificacionCreate }) => 
+      createSubtipificacion(tipificacionId, payload),
+    onSuccess: (_, variables) => {
       qc.invalidateQueries({ queryKey: ["tipificaciones", accountId] })
-      qc.invalidateQueries({ queryKey: ["subtipificaciones", tipificacionId] })
+      qc.invalidateQueries({ queryKey: ["subtipificaciones", variables.tipificacionId] })
       toast.success("Subtipificación creada")
     },
     onError: (error: any) => {
