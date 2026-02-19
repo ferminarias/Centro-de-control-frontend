@@ -256,7 +256,7 @@ export default function AuditoriaPage() {
                           <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
                             <User className="h-3 w-3 text-primary" />
                           </div>
-                          <span className="text-sm">{log.user_nombre || "Sistema"}</span>
+                          <span className="text-sm">{log.user_nombre || log.user_email || "Sistema"}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3">
