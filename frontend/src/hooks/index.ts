@@ -19,5 +19,8 @@ export * from "./useCampanias";
 // Ficha Config
 export * from "./useFichaConfig";
 
+// Centro de Control (Tipificaciones Externas)
+export * from "./useCentroControl";
+
 // UI
 export * from "./useToast";

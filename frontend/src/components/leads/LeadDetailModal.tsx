@@ -1,10 +1,12 @@
 import Modal from "@/components/ui/Modal"
 import CopyButton from "@/components/ui/CopyButton"
 import { Spinner } from "@/components/ui/Loading"
+import Badge from "@/components/ui/Badge"
 import { useLeadDetail } from "@/hooks/useLeads"
+import { useLeadTipificacionesExternas } from "@/hooks/useCentroControl"
 import { LeadCRMDetail } from "@/components/crm"
 import { formatDate } from "@/lib/utils"
-import { Phone, Mail, Building, MapPin, Tag } from "lucide-react"
+import { Phone, Mail, Building, MapPin, Tag, Radio } from "lucide-react"
 import type { LeadResponse } from "@/types"
 
 interface Props {
@@ -27,7 +29,10 @@ export default function LeadDetailModal({ open, onOpenChange, leadId }: Props) {
           
           {/* CRM Detail - Timeline, Tareas, Notas, Tags */}
           <LeadCRMDetail lead={lead} />
-          
+
+          {/* Tipificaciones Externas */}
+          <LeadTipificacionesExternas leadId={lead.id} />
+
           {/* Datos completos (collapsible) */}
           <LeadDataSection lead={lead} />
         </div>
@@ -132,27 +137,37 @@ function LeadHeader({ lead }: { lead: LeadResponse }) {
         <div className="flex items-center gap-2 mt-3">
           <Tag className="h-4 w-4 text-muted-foreground" />
           {lead.tipificacion && (
-            <span 
+            <span
               className="px-2 py-0.5 rounded text-xs font-medium"
-              style={{ 
+              style={{
                 backgroundColor: lead.tipificacion.color + '20',
-                color: lead.tipificacion.color 
+                color: lead.tipificacion.color
               }}
             >
               {lead.tipificacion.nombre}
             </span>
           )}
           {lead.subtipificacion && (
-            <span 
+            <span
               className="px-2 py-0.5 rounded text-xs"
-              style={{ 
+              style={{
                 backgroundColor: lead.subtipificacion.color + '20',
-                color: lead.subtipificacion.color 
+                color: lead.subtipificacion.color
               }}
             >
               {lead.subtipificacion.nombre}
             </span>
           )}
+        </div>
+      )}
+
+      {/* Última tipificación externa */}
+      {getString(datos.ultima_tipificacion) && (
+        <div className="flex items-center gap-2 mt-2">
+          <Radio className="h-4 w-4 text-purple-500" />
+          <Badge variant="info">
+            Tip. externa: {getString(datos.ultima_tipificacion)}
+          </Badge>
         </div>
       )}
     </div>
@@ -185,6 +200,46 @@ function LeadDataSection({ lead }: { lead: LeadResponse }) {
           <code className="font-mono">{lead.record_id}</code>
         </div>
       )}
+    </div>
+  )
+}
+
+function LeadTipificacionesExternas({ leadId }: { leadId: string }) {
+  const { data: tipificaciones, isLoading } = useLeadTipificacionesExternas(leadId)
+
+  if (isLoading) return null
+  if (!tipificaciones || tipificaciones.length === 0) return null
+
+  return (
+    <div className="border rounded-lg overflow-hidden">
+      <div className="bg-gray-50 px-4 py-2 border-b flex items-center gap-2">
+        <Radio className="h-4 w-4 text-purple-500" />
+        <label className="text-sm font-medium text-muted-foreground">
+          Tipificaciones Externas ({tipificaciones.length})
+        </label>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-border">
+              <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground">Fecha</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground">ID Neotel</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground">ID Subresol.</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {tipificaciones.map((tip) => (
+              <tr key={tip.id} className="hover:bg-gray-50">
+                <td className="px-4 py-2 text-xs text-muted-foreground">
+                  {new Date(tip.created_at).toLocaleString("es-ES")}
+                </td>
+                <td className="px-4 py-2 font-mono text-xs">{tip.id_neotel}</td>
+                <td className="px-4 py-2 font-mono text-xs">{tip.id_subresolucion}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
