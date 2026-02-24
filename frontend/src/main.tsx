@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom"
 import { Toaster } from "sonner"
 import { AccountProvider } from "./context/AccountContext"
 import { CampaignProvider } from "./context/CampaignContext"
+import { ErrorBoundary } from "./components/ui/ErrorBoundary"
 import App from "./App"
 import "./index.css"
 
@@ -20,12 +21,13 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AccountProvider>
-          <CampaignProvider>
-            <App />
-            <Toaster
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <AccountProvider>
+            <CampaignProvider>
+              <App />
+              <Toaster
               position="top-right"
               toastOptions={{
                 style: {
@@ -36,9 +38,10 @@ createRoot(document.getElementById("root")!).render(
                 },
               }}
             />
-          </CampaignProvider>
-        </AccountProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
+            </CampaignProvider>
+          </AccountProvider>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </ErrorBoundary>
   </StrictMode>
 )

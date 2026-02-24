@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom"
 import Layout from "./components/layout/Layout"
+import { ProtectedRoute } from "./components/auth/ProtectedRoute"
 import Welcome from "./pages/Welcome"
 import Login from "./pages/Login"
 import Fields from "./pages/Fields"
@@ -40,37 +41,170 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route element={<Layout />}>
         <Route path="/" element={<Welcome />} />
-        <Route path="/fields" element={<Fields />} />
-        <Route path="/leads" element={<Leads />} />
-        <Route path="/bases" element={<Bases />} />
-        <Route path="/bases/:baseId" element={<BaseDetail />} />
-        <Route path="/datasources" element={<DataSources />} />
-        <Route path="/move-leads" element={<MoveLeads />} />
-        <Route path="/lotes" element={<Lotes />} />
-        <Route path="/bulk-update" element={<BulkUpdate />} />
-        <Route path="/webhooks" element={<Webhooks />} />
-        <Route path="/automations" element={<Automations />} />
-        <Route path="/callcenter/providers" element={<SipProviders />} />
-        <Route path="/callcenter/trunks" element={<SipTrunks />} />
-        <Route path="/callcenter/pbx" element={<PbxNodes />} />
-        <Route path="/callcenter/agents" element={<VoipAgents />} />
-        <Route path="/callcenter/dispositions" element={<Dispositions />} />
-        <Route path="/callcenter/campaigns" element={<Campaigns />} />
-        <Route path="/callcenter/campaigns/:campaignId" element={<CampaignDetail />} />
-        <Route path="/callcenter/cdr" element={<CallRecords />} />
-        <Route path="/callcenter/dnc" element={<DncList />} />
-        <Route path="/callcenter/gestion" element={<GestionContactos />} />
-        <Route path="/admin/users" element={<UsersAdmin />} />
-        <Route path="/admin/roles" element={<RolesAdmin />} />
-        <Route path="/admin/tipificaciones" element={<TipificacionesAdmin />} />
-        <Route path="/admin/campanias" element={<CampaniasAdmin />} />
-        <Route path="/admin/auditoria" element={<AuditoriaPage />} />
-        <Route path="/admin/ficha-config" element={<FichaConfigAdmin />} />
+
+        {/* Data */}
+        <Route path="/fields" element={
+          <ProtectedRoute module="fields">
+            <Fields />
+          </ProtectedRoute>
+        } />
+        <Route path="/leads" element={
+          <ProtectedRoute module="leads">
+            <Leads />
+          </ProtectedRoute>
+        } />
+        <Route path="/bases" element={
+          <ProtectedRoute module="leads">
+            <Bases />
+          </ProtectedRoute>
+        } />
+        <Route path="/bases/:baseId" element={
+          <ProtectedRoute module="leads">
+            <BaseDetail />
+          </ProtectedRoute>
+        } />
+        <Route path="/datasources" element={
+          <ProtectedRoute module="leads">
+            <DataSources />
+          </ProtectedRoute>
+        } />
+        <Route path="/move-leads" element={
+          <ProtectedRoute module="leads" action="edit">
+            <MoveLeads />
+          </ProtectedRoute>
+        } />
+        <Route path="/lotes" element={
+          <ProtectedRoute module="leads">
+            <Lotes />
+          </ProtectedRoute>
+        } />
+        <Route path="/bulk-update" element={
+          <ProtectedRoute module="leads" action="edit">
+            <BulkUpdate />
+          </ProtectedRoute>
+        } />
+
+        {/* Automation */}
+        <Route path="/webhooks" element={
+          <ProtectedRoute module="webhooks">
+            <Webhooks />
+          </ProtectedRoute>
+        } />
+        <Route path="/automations" element={
+          <ProtectedRoute module="automations">
+            <Automations />
+          </ProtectedRoute>
+        } />
+
+        {/* Call Center */}
+        <Route path="/callcenter/providers" element={
+          <ProtectedRoute module="voip">
+            <SipProviders />
+          </ProtectedRoute>
+        } />
+        <Route path="/callcenter/trunks" element={
+          <ProtectedRoute module="voip">
+            <SipTrunks />
+          </ProtectedRoute>
+        } />
+        <Route path="/callcenter/pbx" element={
+          <ProtectedRoute module="voip">
+            <PbxNodes />
+          </ProtectedRoute>
+        } />
+        <Route path="/callcenter/agents" element={
+          <ProtectedRoute module="agents">
+            <VoipAgents />
+          </ProtectedRoute>
+        } />
+        <Route path="/callcenter/dispositions" element={
+          <ProtectedRoute module="voip">
+            <Dispositions />
+          </ProtectedRoute>
+        } />
+        <Route path="/callcenter/campaigns" element={
+          <ProtectedRoute module="campaigns">
+            <Campaigns />
+          </ProtectedRoute>
+        } />
+        <Route path="/callcenter/campaigns/:campaignId" element={
+          <ProtectedRoute module="campaigns">
+            <CampaignDetail />
+          </ProtectedRoute>
+        } />
+        <Route path="/callcenter/cdr" element={
+          <ProtectedRoute module="voip">
+            <CallRecords />
+          </ProtectedRoute>
+        } />
+        <Route path="/callcenter/dnc" element={
+          <ProtectedRoute module="voip">
+            <DncList />
+          </ProtectedRoute>
+        } />
+        <Route path="/callcenter/gestion" element={
+          <ProtectedRoute module="campaigns">
+            <GestionContactos />
+          </ProtectedRoute>
+        } />
+
+        {/* Admin — requires explicit admin permissions */}
+        <Route path="/admin/users" element={
+          <ProtectedRoute module="users">
+            <UsersAdmin />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/roles" element={
+          <ProtectedRoute module="roles">
+            <RolesAdmin />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/tipificaciones" element={
+          <ProtectedRoute module="settings">
+            <TipificacionesAdmin />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/campanias" element={
+          <ProtectedRoute module="campaigns">
+            <CampaniasAdmin />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/auditoria" element={
+          <ProtectedRoute module="settings">
+            <AuditoriaPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/ficha-config" element={
+          <ProtectedRoute module="settings">
+            <FichaConfigAdmin />
+          </ProtectedRoute>
+        } />
+
+        {/* Centro de Control */}
         <Route path="/centro-control" element={<CentroControlPage />} />
-        <Route path="/reportes" element={<ReportesPage />} />
-        <Route path="/reportes/bases" element={<ReporteBasesPage />} />
-        <Route path="/reportes/agentes" element={<MetricasAgentesPage />} />
-        <Route path="/reportes/monitor" element={<MonitorPage />} />
+
+        {/* Reportes */}
+        <Route path="/reportes" element={
+          <ProtectedRoute module="reportes">
+            <ReportesPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/reportes/bases" element={
+          <ProtectedRoute module="reportes">
+            <ReporteBasesPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/reportes/agentes" element={
+          <ProtectedRoute module="reportes">
+            <MetricasAgentesPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/reportes/monitor" element={
+          <ProtectedRoute module="reportes">
+            <MonitorPage />
+          </ProtectedRoute>
+        } />
+
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

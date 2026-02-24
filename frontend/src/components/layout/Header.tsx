@@ -18,14 +18,8 @@ const statusVariant = (s: CampaignStatus) => {
 export default function Header() {
   const { selectedAccount, setSelectedAccount } = useAccount()
   const { selectedCampaign, setSelectedCampaign } = useCampaign()
-  const { data, error, isLoading } = useAccountsList()
+  const { data, isLoading } = useAccountsList()
   const { data: campaignsData } = useCampaigns(selectedAccount?.id ?? undefined)
-
-  // Debug: log API response
-  useEffect(() => {
-    console.log("Accounts data:", data)
-    console.log("Accounts error:", error)
-  }, [data, error])
 
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [campaignDropdownOpen, setCampaignDropdownOpen] = useState(false)
@@ -34,9 +28,6 @@ export default function Header() {
   const campaignDropdownRef = useRef<HTMLDivElement>(null)
 
   const accounts = data?.items?.filter((a) => a.activo) ?? []
-  
-  // Debug: show raw count
-  const rawCount = data?.items?.length ?? 0
   const campaigns = campaignsData?.items ?? []
 
   useEffect(() => {

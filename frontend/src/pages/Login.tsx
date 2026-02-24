@@ -16,27 +16,28 @@ export default function Login() {
     setIsLoading(true)
 
     try {
-      const payload: any = {
+      const payload: { username: string; password: string; cuenta_id?: string } = {
         username,
         password,
       }
-      
-      // Solo agregar cuenta_id si tiene valor
-      if (cuentaId && cuentaId.trim() !== "") {
+
+      if (cuentaId.trim() !== "") {
         payload.cuenta_id = cuentaId.trim()
       }
-      
+
       const { data } = await apiClient.post("/api/v1/auth/login", payload)
-      
-      // Guardar token
+
       localStorage.setItem("token", data.access_token)
-      
-      // Redirigir al home
+      if (data.refresh_token) {
+        localStorage.setItem("refresh_token", data.refresh_token)
+      }
+
       navigate("/")
-    } catch (err: any) {
-      console.error("Login error:", err)
-      const errorMsg = err.response?.data?.detail || err.response?.data?.msg || "Error al iniciar sesión"
-      setError(typeof errorMsg === "string" ? errorMsg : "Error al iniciar sesión")
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: { detail?: unknown } } }
+      const detail = axiosErr.response?.data?.detail
+      const errorMsg = typeof detail === "string" ? detail : "Error al iniciar sesión"
+      setError(errorMsg)
     } finally {
       setIsLoading(false)
     }
