@@ -34,6 +34,7 @@ import CallRecords from "./pages/CallRecords"
 import DncList from "./pages/DncList"
 import FichaConfigAdmin from "./pages/FichaConfigAdmin"
 import CentroControlPage from "./pages/CentroControlPage"
+import ApiDocsPage from "./pages/ApiDocsPage"
 
 export default function App() {
   return (
@@ -177,6 +178,11 @@ export default function App() {
         <Route path="/admin/ficha-config" element={
           <ProtectedRoute module="settings">
             <FichaConfigAdmin />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/api-docs" element={
+          <ProtectedRoute module="accounts">
+            <ApiDocsPage />
           </ProtectedRoute>
         } />
 

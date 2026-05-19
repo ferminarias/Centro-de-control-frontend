@@ -33,3 +33,17 @@ export const toggleAutoCreate = async (id: string) => {
   )
   return data
 }
+
+export const regenerateApiKey = async (id: string) => {
+  const { data } = await apiClient.post<AccountResponse>(
+    `/api/v1/admin/accounts/${id}/regenerate-key`
+  )
+  return data
+}
+
+export const regenerateWebhookSecret = async (id: string) => {
+  const { data } = await apiClient.post<AccountResponse>(
+    `/api/v1/admin/accounts/${id}/regenerate-webhook-secret`
+  )
+  return data
+}

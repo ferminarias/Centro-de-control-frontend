@@ -4,6 +4,7 @@ export interface AccountResponse {
   id: string
   nombre: string
   api_key: string
+  webhook_secret: string
   activo: boolean
   auto_crear_campos: boolean
   created_at: string
