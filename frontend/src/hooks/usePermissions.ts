@@ -83,8 +83,15 @@ export function usePermissions() {
    * @param action - Action code (e.g., "view", "create")
    */
   const can = (moduleCode: string, action: string): boolean => {
-    if (!permissions?.modulos) return false;
-    const modulePerms = permissions.modulos[moduleCode];
+    const permisos = permissions?.permisos ?? [];
+    // Superadmin wildcard
+    if (permisos.includes("*")) return true;
+    // Module wildcard: "fields:*"
+    if (permisos.includes(`${moduleCode}:*`)) return true;
+    // Specific legacy permission: "fields:view"
+    if (permisos.includes(`${moduleCode}:${action}`)) return true;
+    // Modular permissions
+    const modulePerms = permissions?.modulos?.[moduleCode];
     if (!modulePerms) return false;
     return modulePerms.includes("*") || modulePerms.includes(action);
   };
