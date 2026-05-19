@@ -93,16 +93,10 @@ export default function Header() {
                 <div className="p-2">
                   {accounts.length === 0 ? (
                     <div className="px-3 py-4 text-sm text-muted-foreground text-center">
-                      <p>No hay cuentas activas</p>
-                      {isLoading && <p className="text-xs mt-1">Cargando...</p>}
-                      {error && <p className="text-xs text-red-500 mt-1">Error: {error.message}</p>}
-                      {!isLoading && !error && rawCount > 0 && (
-                        <p className="text-xs text-orange-500 mt-1">
-                          {rawCount} cuenta(s) encontrada(s) pero inactiva(s)
-                        </p>
-                      )}
-                      {!isLoading && !error && rawCount === 0 && (
-                        <p className="text-xs text-gray-400 mt-1">API devolvió 0 cuentas</p>
+                      {isLoading ? (
+                        <p>Cargando...</p>
+                      ) : (
+                        <p>No hay cuentas activas</p>
                       )}
                     </div>
                   ) : (
