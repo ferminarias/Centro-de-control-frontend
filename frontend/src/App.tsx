@@ -35,14 +35,10 @@ import DncList from "./pages/DncList"
 import FichaConfigAdmin from "./pages/FichaConfigAdmin"
 import CentroControlPage from "./pages/CentroControlPage"
 import ApiDocsPage from "./pages/ApiDocsPage"
-import ProdeApp from "./prode/ProdeApp"
 
 export default function App() {
   return (
     <Routes>
-      {/* Prode Mundial 2026 — standalone app, no CRM layout */}
-      <Route path="/prode/*" element={<ProdeApp />} />
-
       <Route path="/login" element={<Login />} />
       <Route element={<Layout />}>
         <Route path="/" element={<Welcome />} />
