@@ -1,11 +1,14 @@
 import { useState, FormEvent } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Navigate } from "react-router-dom"
 import { useProdeAuth } from "../context/ProdeAuthContext"
 import { prodeLogin } from "../api/prodeAuth"
 
 export default function ProdeLogin() {
   const navigate = useNavigate()
-  const { login } = useProdeAuth()
+  const { login, user, isLoading } = useProdeAuth()
+
+  // If already authenticated, skip the login page
+  if (!isLoading && user) return <Navigate to="/prode" replace />
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
