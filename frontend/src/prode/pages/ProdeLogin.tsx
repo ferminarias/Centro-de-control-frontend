@@ -1,4 +1,5 @@
-import { useState, FormEvent } from "react"
+import { useState } from "react"
+import type { FormEvent } from "react"
 import { useNavigate, Navigate } from "react-router-dom"
 import { useProdeAuth } from "../context/ProdeAuthContext"
 import { prodeLogin } from "../api/prodeAuth"

@@ -1,5 +1,7 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react"
-import { prodeMe, ProdeUser } from "../api/prodeAuth"
+import { createContext, useContext, useState, useEffect } from "react"
+import type { ReactNode } from "react"
+import { prodeMe } from "../api/prodeAuth"
+import type { ProdeUser } from "../api/prodeAuth"
 
 interface ProdeAuthContextType {
   user: ProdeUser | null
